@@ -10,7 +10,7 @@ export const SITE = {
   title: 'Shengguang Zhu',
   tagline: 'Making distributed training and inference as fast and scalable as possible.',
   description:
-    'ML systems engineer working on RL infrastructure, SGLang, and high-throughput LLM inference. Notes on schedulers, kernels, and the systems side of machine learning.',
+    'ML systems engineer working on RL infrastructure and high-throughput LLM inference, contributing to SGLang and FastDeploy. Notes on schedulers, kernels, and the systems side of machine learning.',
   author: 'Shengguang Zhu',
   /** Shown as a subtitle under the name. */
   role: 'ML Systems Engineer · High-Performance Computing',
