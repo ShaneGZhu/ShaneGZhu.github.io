@@ -90,14 +90,18 @@
 
   /*
    * Brand colours for the social icons, keyed to the icon names in
-   * src/components/Icon.astro. In the light theme these are the official brand
-   * colours as published by each service; all four clear 3:1 against both the
-   * page and footer surfaces, which is the WCAG threshold for graphical objects.
+   * src/components/Icon.astro. These are the official brand colours as published
+   * by each service, except the mail icon, which is drawn in ink rather than
+   * Gmail red so it matches the neutral mark beside it.
+   *
+   * Zhihu, 小红书 and the mail mark clear 3:1 against both the page and footer
+   * surfaces, which is the WCAG threshold for graphical objects; GitHub's black
+   * needs a lighter value in the dark theme (see below).
    */
   --brand-github: #181717;
   --brand-zhihu: #0084ff;
   --brand-xiaohongshu: #ff2442;
-  --brand-mail: #ea4335;
+  --brand-mail: #181717;
 }
 
 [data-theme='dark'] {
@@ -147,7 +151,12 @@
   --brand-github: #676666;
   --brand-zhihu: #0084ff;
   --brand-xiaohongshu: #ff2442;
-  --brand-mail: #ea4335;
+  /*
+   * The mail icon is ink, not a brand colour, so it has to follow the same dark
+   * theme substitution as GitHub: black on a dark surface is unreadable. Set this
+   * back to #181717 if you would rather have literal black in both themes.
+   */
+  --brand-mail: #676666;
 }
 
 *,
