@@ -26,7 +26,7 @@ const hasMore = posts.length > recent.length;
 
     <ul class="intro__links">
       {
-        SOCIAL.filter((item) => item.label !== 'RSS').map((item) => (
+        SOCIAL.map((item) => (
           <li>
             <a class="intro__link" href={item.href}>
               {item.label}

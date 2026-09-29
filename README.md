@@ -30,7 +30,7 @@ Create a file under `src/content/posts/`. The filename becomes the URL:
 ---
 title: 'A title, in English or Chinese'
 description: >-
-  One or two sentences. Used in listings, link previews and the RSS feed, so
+  One or two sentences. Used in listings and link previews, so
   write it for a reader who has not opened the post yet.
 pubDate: 2025-03-09
 tags: ['Inference', 'Scheduling']
@@ -98,7 +98,7 @@ page at `/posts/rendering-reference` to see what each construct looks like.
 tagline, description, author, role, email, URL, navigation items, social links,
 posts per page, and the `FOCUS` list that drives the "What I do" section on the
 home page and the About page. `SITE.url` must match the deployed origin —
-canonical links, the sitemap and the RSS feed are built from it.
+canonical links and the sitemap are built from it.
 
 Colours, spacing and type scale live at the top of `src/styles/global.css` as
 custom properties, with the dark theme as a single `[data-theme='dark']` block.
@@ -127,7 +127,7 @@ src/
 ├── content/posts/   the posts themselves
 ├── layouts/         BaseLayout (document shell), PostLayout (articles)
 ├── markdown/        Markdown pipeline plugins (math, callouts, figures, …)
-├── pages/           routes, including rss.xml.ts and 404.astro
+├── pages/           routes, including 404.astro
 ├── styles/          global.css (tokens, chrome), prose.css (article body)
 ├── utils/           post queries, tag grouping, date and reading-time helpers
 ├── content.config.ts   frontmatter schema

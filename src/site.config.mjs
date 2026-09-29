@@ -1,10 +1,9 @@
 /**
  * Single place to edit site-wide metadata.
  *
- * `url` must match the deployed origin for canonical links, the sitemap and the
- * RSS feed to be correct. For a GitHub user/organization Pages repository
- * (`<user>.github.io`) the site is served from the domain root, so `base` stays
- * undefined.
+ * `url` must match the deployed origin for canonical links and the sitemap to be
+ * correct. For a GitHub user/organization Pages repository (`<user>.github.io`)
+ * the site is served from the domain root, so `base` stays undefined.
  */
 export const SITE = {
   url: 'https://shanegzhu.github.io',
@@ -34,7 +33,6 @@ export const SOCIAL = [
   { label: 'Zhihu', href: 'https://www.zhihu.com/people/zhu-sheng-guang-30' },
   { label: 'Rednote', href: 'https://www.xiaohongshu.com/user/profile/5c596598000000001200e203' },
   { label: 'Email', href: 'mailto:shengguangzhu@qq.com' },
-  { label: 'RSS', href: '/rss.xml' },
 ];
 
 /** What I work on — shown on the home page and the About page. */
