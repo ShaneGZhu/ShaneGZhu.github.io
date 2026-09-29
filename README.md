@@ -151,7 +151,9 @@ src/
   build time. Chinese text falls through to the system font, which is both
   faster and better-looking than a webfont CJK subset.
 - Icons are inlined single-path SVGs in `src/components/Icon.astro`, so they need
-  no icon font and no extra request. Each one paints in its brand colour from the
+  no icon font and no extra request. The `size` prop is in `em`, so icons scale
+  with the fluid type scale; it reaches the SVG as a `--icon-size` custom
+  property, because a scoped `width` rule would override a width attribute. Each one paints in its brand colour from the
   `--brand-*` tokens in `src/styles/global.css`, keyed by icon name; the dark
   theme substitutes lighter values where a brand colour is too dark to see.
   Pass `brand={false}` for a monochrome icon that should follow the text colour.

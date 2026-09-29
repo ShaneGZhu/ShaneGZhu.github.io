@@ -35,26 +35,29 @@ const PATHS = {
   mail: 'M1.5 4.5h21a1.5 1.5 0 0 1 1.5 1.5v12a1.5 1.5 0 0 1-1.5 1.5h-21A1.5 1.5 0 0 1 0 18V6a1.5 1.5 0 0 1 1.5-1.5Zm10.5 8.4L2.6 6.6A.6.6 0 0 0 2 7.1v.5l10 6.8 10-6.8v-.5a.6.6 0 0 0-.6-.5Z',
 } as const;
 
-const { name, size = 1, title, brand = true } = Astro.props;
+const { name, size = 1.45, title, brand = true } = Astro.props;
 const path = PATHS[name];
 
 /*
- * The custom property is set inline rather than in a scoped <style> rule: the
- * inner `.icon__path` element cannot be targeted from scoped styles without
- * `:global()`, and an inline property is inherited by the path regardless.
- *
- * The fallback chain means an icon with no brand token renders in the text
- * colour rather than disappearing.
+ * Both values travel as inline custom properties. A scoped <style> rule cannot
+ * reach the inner `.icon__path`, but an inline property is inherited by it; and
+ * size has to be a property rather than a `width` attribute because a
+ * stylesheet declaration beats a presentation attribute. The `currentColor`
+ * fallback means an icon with no brand token renders in the text colour rather
+ * than disappearing.
  */
-const colorVar = brand ? `var(--brand-${name}, currentColor)` : undefined;
+const styles = [
+  brand ? `--icon-color: var(--brand-${name}, currentColor)` : null,
+  `--icon-size: ${size}em`,
+]
+  .filter(Boolean)
+  .join('; ');
 ---
 
 <svg
   class="icon"
   viewBox="0 0 24 24"
-  width={size}
-  height={size}
-  style={colorVar ? `color: ${colorVar}` : undefined}
+  style={styles}
   role={title ? 'img' : undefined}
   aria-hidden={title ? undefined : 'true'}
   focusable="false"
@@ -64,11 +67,22 @@ const colorVar = brand ? `var(--brand-${name}, currentColor)` : undefined;
 </svg>
 
 <style>
+  /*
+   * `em` sizing keeps icons in proportion with whatever text they sit beside, so
+   * they scale with the fluid type scale instead of being pinned to pixels.
+   */
   .icon {
-    /* `em` sizing keeps icons aligned with whatever text they sit beside. */
-    width: 1em;
-    height: 1em;
+    /* `color` resolves --icon-color here; the path fills from currentColor. */
+    color: var(--icon-color, currentColor);
+    width: var(--icon-size, 1.45em);
+    height: var(--icon-size, 1.45em);
     flex: none;
     display: block;
+    overflow: visible;
+  }
+
+  /* Rounds the line joins, which keeps the marks crisp rather than spiky. */
+  .icon__path {
+    stroke-linejoin: round;
   }
 </style>
