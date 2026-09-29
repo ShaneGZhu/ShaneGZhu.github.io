@@ -19,6 +19,8 @@ export const SITE = {
   defaultLanguage: 'en',
   locale: 'en_US',
   postsPerPage: 8,
+  /** How many posts the home page lists before linking to the full index. */
+  postsOnHome: 4,
 };
 
 export const NAV = [
@@ -28,11 +30,29 @@ export const NAV = [
   { label: 'About', href: '/about' },
 ];
 
+/**
+ * `icon` names a glyph in `src/components/Icon.astro`. Icons appear in the footer,
+ * on the home page, and on the About page, so this set has to cover whatever is
+ * listed here.
+ *
+ * `@type` keeps each icon name a literal so a typo is a type error rather than a
+ * silently missing glyph. (`as const` is not available — this is a `.mjs` file.)
+ *
+ * @type {ReadonlyArray<{ label: string, href: string, icon: 'github' | 'zhihu' | 'xiaohongshu' | 'mail' }>}
+ */
 export const SOCIAL = [
-  { label: 'GitHub', href: 'https://github.com/ShaneGZhu' },
-  { label: 'Zhihu', href: 'https://www.zhihu.com/people/zhu-sheng-guang-30' },
-  { label: 'Rednote', href: 'https://www.xiaohongshu.com/user/profile/5c596598000000001200e203' },
-  { label: 'Email', href: 'mailto:shengguangzhu@qq.com' },
+  { label: 'GitHub', href: 'https://github.com/ShaneGZhu', icon: 'github' },
+  {
+    label: 'Zhihu',
+    href: 'https://www.zhihu.com/people/zhu-sheng-guang-30',
+    icon: 'zhihu',
+  },
+  {
+    label: 'Rednote',
+    href: 'https://www.xiaohongshu.com/user/profile/5c596598000000001200e203',
+    icon: 'xiaohongshu',
+  },
+  { label: 'Email', href: 'mailto:shengguangzhu@qq.com', icon: 'mail' },
 ];
 
 /** What I work on — shown on the home page and the About page. */

@@ -1,40 +1,60 @@
 ---
 /**
- * Home page: who I am, what I work on, then the most recent writing.
+ * Home page: avatar, short intro, what I work on, then the latest few posts with
+ * a link through to the full index.
  */
+import { Image } from 'astro:assets';
+
 import BaseLayout from '../layouts/BaseLayout.astro';
 import PostCard from '../components/PostCard.astro';
-import { getPublishedPosts, sortFeaturedFirst, collectTags } from '../utils/posts';
+import Icon from '../components/Icon.astro';
+import avatar from '../assets/avatar.jpg';
+import { getPublishedPosts, sortFeaturedFirst } from '../utils/posts';
 import { SITE, FOCUS, SOCIAL } from '../site.config.mjs';
 
 const posts = await getPublishedPosts();
-const recent = sortFeaturedFirst(posts).slice(0, 6);
-const tags = collectTags(posts).slice(0, 10);
+const recent = sortFeaturedFirst(posts).slice(0, SITE.postsOnHome);
 const hasMore = posts.length > recent.length;
 ---
 
 <BaseLayout>
   <section class="intro">
-    <p class="eyebrow">{SITE.role}</p>
-    <h1 class="intro__title">Hi there, I'm {SITE.author} 👋</h1>
-    <p class="intro__body">
-      I'm a developer deeply passionate about <strong>AI infrastructure</strong>, with a primary
-      focus on <strong>reinforcement learning frameworks</strong> and <strong>SGLang</strong>. My
-      goal is to make distributed training and inference as fast and scalable as possible, diving
-      into the intersection of machine learning and systems.
-    </p>
+    {/*
+      The source is 224px for a 112px box, so a 2x display gets a sharp avatar.
+      `layout="fixed"` keeps Astro from emitting a viewport-based srcset for what
+      is a fixed-size image; the size itself comes from CSS below.
+    */}
+    <Image
+      class="intro__avatar"
+      src={avatar}
+      alt={`Portrait of ${SITE.author}`}
+      layout="fixed"
+      loading="eager"
+    />
 
-    <ul class="intro__links">
-      {
-        SOCIAL.map((item) => (
-          <li>
-            <a class="intro__link" href={item.href}>
-              {item.label}
-            </a>
-          </li>
-        ))
-      }
-    </ul>
+    <div class="intro__text">
+      <p class="eyebrow">{SITE.role}</p>
+      <h1 class="intro__title">Hi there, I'm {SITE.author} 👋</h1>
+      <p class="intro__body">
+        I'm a developer deeply passionate about <strong>AI infrastructure</strong>, with a primary
+        focus on <strong>reinforcement learning frameworks</strong> and <strong>SGLang</strong>. My
+        goal is to make distributed training and inference as fast and scalable as possible, diving
+        into the intersection of machine learning and systems.
+      </p>
+
+      <ul class="intro__links">
+        {
+          SOCIAL.map((item) => (
+            <li>
+              <a class="intro__link" href={item.href}>
+                <Icon name={item.icon} size={1.15} />
+                <span>{item.label}</span>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
   </section>
 
   <section class="focus" aria-labelledby="focus-heading">
@@ -68,8 +88,8 @@ const hasMore = posts.length > recent.length;
     {
       recent.length > 0 ? (
         <div class="listing__items">
-          {recent.map((post, index) => (
-            <PostCard post={post} featured={index === 0} />
+          {recent.map((post) => (
+            <PostCard post={post} />
           ))}
         </div>
       ) : (
@@ -81,17 +101,15 @@ const hasMore = posts.length > recent.length;
     }
 
     {
-      tags.length > 0 && (
-        <ul class="tag-list listing__tags">
-          {tags.map((tag) => (
-            <li>
-              <a class="tag-pill" href={`/tags/${tag.slug}`}>
-                {tag.label}
-              </a>
-            </li>
-          ))}
-        </ul>
-      )
+      /*
+       * Always rendered. The home page is a teaser for the index, so the way
+       * through has to be there even while the list still fits on one page.
+       */
+      <p class="listing__all">
+        <a class="listing__all-link" href="/posts">
+          {posts.length > recent.length ? `All ${posts.length} posts` : 'Browse all posts'} →
+        </a>
+      </p>
     }
   </section>
 
@@ -100,24 +118,40 @@ const hasMore = posts.length > recent.length;
 
 <style>
   .intro {
-    max-width: var(--measure);
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: var(--space-lg);
+    align-items: start;
+    max-width: var(--measure-wide);
     padding-bottom: var(--space-xl);
     border-bottom: 1px solid var(--border);
   }
 
+  .intro__avatar {
+    width: 7rem;
+    height: 7rem;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background-color: var(--bg-subtle);
+  }
+
+  .intro__text {
+    max-width: var(--measure);
+  }
+
   .intro__title {
-    margin-top: var(--space-xs);
+    margin-top: var(--space-2xs);
     font-family: var(--font-serif);
-    font-size: var(--step-4);
+    font-size: var(--step-3);
     font-weight: 600;
     letter-spacing: -0.025em;
-    line-height: 1.12;
+    line-height: 1.15;
   }
 
   .intro__body {
-    margin-top: var(--space-md);
-    font-size: var(--step-1);
-    line-height: 1.6;
+    margin-top: var(--space-sm);
+    font-size: var(--step-0);
+    line-height: 1.65;
     color: var(--text-muted);
   }
 
@@ -127,7 +161,7 @@ const hasMore = posts.length > recent.length;
   }
 
   .intro__links {
-    margin: var(--space-lg) 0 0;
+    margin: var(--space-md) 0 0;
     padding: 0;
     list-style: none;
     display: flex;
@@ -137,6 +171,9 @@ const hasMore = posts.length > recent.length;
   }
 
   .intro__link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45em;
     color: var(--text-muted);
     text-decoration: none;
     border-bottom: 1px solid var(--border-strong);
@@ -223,8 +260,28 @@ const hasMore = posts.length > recent.length;
     margin-top: var(--space-sm);
   }
 
-  .listing__tags {
-    margin-top: var(--space-lg);
+  /* Second, more prominent route to the index at the end of the list. */
+  .listing__all {
+    margin-top: var(--space-md);
+  }
+
+  .listing__all-link {
+    display: inline-block;
+    padding: 0.5em 1.1em;
+    border: 1px solid var(--border-strong);
+    border-radius: 999px;
+    color: var(--text);
+    font-size: var(--step--1);
+    font-weight: 560;
+    text-decoration: none;
+    transition: color var(--transition), border-color var(--transition),
+      background-color var(--transition);
+  }
+
+  .listing__all-link:hover {
+    color: var(--accent);
+    border-color: var(--accent);
+    background-color: var(--accent-soft);
   }
 
   .listing__empty {
@@ -239,5 +296,17 @@ const hasMore = posts.length > recent.length;
     font-family: var(--font-serif);
     font-style: italic;
     color: var(--text-faint);
+  }
+
+  @media (max-width: 34rem) {
+    .intro {
+      grid-template-columns: minmax(0, 1fr);
+      gap: var(--space-md);
+    }
+
+    .intro__avatar {
+      width: 5.5rem;
+      height: 5.5rem;
+    }
   }
 </style>

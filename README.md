@@ -123,7 +123,7 @@ at GitHub, and update `SITE.url` in `src/site.config.mjs` to match.
 ```
 src/
 ├── assets/          images referenced from posts (optimized at build)
-├── components/      Header, Footer, PostCard, TableOfContents, Pagination
+├── components/      Header, Footer, PostCard, TableOfContents, Pagination, Icon
 ├── content/posts/   the posts themselves
 ├── layouts/         BaseLayout (document shell), PostLayout (articles)
 ├── markdown/        Markdown pipeline plugins (math, callouts, figures, …)
@@ -150,3 +150,12 @@ src/
 - Inter and Newsreader are self-hosted: Astro downloads the Latin subsets at
   build time. Chinese text falls through to the system font, which is both
   faster and better-looking than a webfont CJK subset.
+- Icons are inlined single-path SVGs in `src/components/Icon.astro` and inherit
+  `currentColor`, so they need no icon font, no extra request, and no per-theme
+  asset. The social links on the home page, the About page and the footer are all
+  driven by `SOCIAL` in `src/site.config.mjs`, whose `icon` field names a glyph
+  there; adding a link means adding both.
+- `src/assets/avatar.jpg` is the home page portrait. It is stored at 224px for a
+  112px box so 2x displays get a sharp image.
+- `SITE.postsOnHome` controls how many posts the home page lists before the
+  "Browse all posts" link through to the full index.
