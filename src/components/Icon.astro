@@ -2,9 +2,14 @@
 /**
  * Brand and UI icons, inlined as single-path SVGs.
  *
- * Inlining avoids an icon-font or sprite request and lets each glyph inherit
- * `currentColor`, so icons match the surrounding text in both themes without a
- * second set of assets. Paths come from Simple Icons (CC0) for the brand marks.
+ * Inlining avoids an icon-font or sprite request and needs no second set of
+ * assets per theme. Paths come from Simple Icons (CC0) for the brand marks.
+ *
+ * Colour comes from the `--brand-*` tokens in `src/styles/global.css`, keyed by
+ * the icon name, so each mark carries its real brand colour and the dark theme
+ * can substitute accessible values where a brand colour is too dark to see. Pass
+ * `brand={false}` for a monochrome icon that should follow the text colour
+ * instead.
  *
  * Icons are decorative by default: pass a `title` only when the icon is the sole
  * content of a control, since a `title` turns it into a labelled image for
@@ -16,6 +21,8 @@ interface Props {
   size?: number;
   /** Accessible name. Omit for icons that sit next to visible text. */
   title?: string;
+  /** Set `false` to inherit the surrounding text colour instead of the brand one. */
+  brand?: boolean;
 }
 
 const PATHS = {
@@ -28,8 +35,18 @@ const PATHS = {
   mail: 'M1.5 4.5h21a1.5 1.5 0 0 1 1.5 1.5v12a1.5 1.5 0 0 1-1.5 1.5h-21A1.5 1.5 0 0 1 0 18V6a1.5 1.5 0 0 1 1.5-1.5Zm10.5 8.4L2.6 6.6A.6.6 0 0 0 2 7.1v.5l10 6.8 10-6.8v-.5a.6.6 0 0 0-.6-.5Z',
 } as const;
 
-const { name, size = 1, title } = Astro.props;
+const { name, size = 1, title, brand = true } = Astro.props;
 const path = PATHS[name];
+
+/*
+ * The custom property is set inline rather than in a scoped <style> rule: the
+ * inner `.icon__path` element cannot be targeted from scoped styles without
+ * `:global()`, and an inline property is inherited by the path regardless.
+ *
+ * The fallback chain means an icon with no brand token renders in the text
+ * colour rather than disappearing.
+ */
+const colorVar = brand ? `var(--brand-${name}, currentColor)` : undefined;
 ---
 
 <svg
@@ -37,13 +54,13 @@ const path = PATHS[name];
   viewBox="0 0 24 24"
   width={size}
   height={size}
-  fill="currentColor"
+  style={colorVar ? `color: ${colorVar}` : undefined}
   role={title ? 'img' : undefined}
   aria-hidden={title ? undefined : 'true'}
   focusable="false"
 >
   {title && <title>{title}</title>}
-  <path d={path} />
+  <path class="icon__path" d={path} fill="currentColor" />
 </svg>
 
 <style>

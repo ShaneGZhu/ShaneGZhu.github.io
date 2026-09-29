@@ -87,6 +87,17 @@
   --callout-quote-border: #8d8c84;
   --callout-quote-bg: #f4f4f0;
   --callout-quote-text: #5d5c56;
+
+  /*
+   * Brand colours for the social icons, keyed to the icon names in
+   * src/components/Icon.astro. In the light theme these are the official brand
+   * colours as published by each service; all four clear 3:1 against both the
+   * page and footer surfaces, which is the WCAG threshold for graphical objects.
+   */
+  --brand-github: #181717;
+  --brand-zhihu: #0084ff;
+  --brand-xiaohongshu: #ff2442;
+  --brand-mail: #ea4335;
 }
 
 [data-theme='dark'] {
@@ -126,6 +137,17 @@
   --callout-quote-border: #5a5954;
   --callout-quote-bg: #1a1a1d;
   --callout-quote-text: #a3a19b;
+
+  /*
+   * Same brand colours, except GitHub. Its mark is near-black (#181717), which
+   * has a 1.04:1 ratio on a dark surface and would be invisible; the lighter
+   * grey below keeps the neutral character of the mark at 3.2:1. The other three
+   * are already light enough to clear 3:1 unchanged.
+   */
+  --brand-github: #676666;
+  --brand-zhihu: #0084ff;
+  --brand-xiaohongshu: #ff2442;
+  --brand-mail: #ea4335;
 }
 
 *,

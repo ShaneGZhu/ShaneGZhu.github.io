@@ -150,11 +150,14 @@ src/
 - Inter and Newsreader are self-hosted: Astro downloads the Latin subsets at
   build time. Chinese text falls through to the system font, which is both
   faster and better-looking than a webfont CJK subset.
-- Icons are inlined single-path SVGs in `src/components/Icon.astro` and inherit
-  `currentColor`, so they need no icon font, no extra request, and no per-theme
-  asset. The social links on the home page, the About page and the footer are all
-  driven by `SOCIAL` in `src/site.config.mjs`, whose `icon` field names a glyph
-  there; adding a link means adding both.
+- Icons are inlined single-path SVGs in `src/components/Icon.astro`, so they need
+  no icon font and no extra request. Each one paints in its brand colour from the
+  `--brand-*` tokens in `src/styles/global.css`, keyed by icon name; the dark
+  theme substitutes lighter values where a brand colour is too dark to see.
+  Pass `brand={false}` for a monochrome icon that should follow the text colour.
+  The social links on the home page, the About page and the footer are all driven
+  by `SOCIAL` in `src/site.config.mjs`, whose `icon` field names a glyph in that
+  component; adding a link means adding both, plus a brand token if it needs one.
 - `src/assets/avatar.jpg` is the home page portrait. It is stored at 224px for a
   112px box so 2x displays get a sharp image.
 - `SITE.postsOnHome` controls how many posts the home page lists before the
