@@ -1,0 +1,60 @@
+---
+/**
+ * Post index, page 1. Later pages live at `/posts/page/2`, which keeps this
+ * route from colliding with `/posts/<slug>`.
+ */
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PostCard from '../../components/PostCard.astro';
+import Pagination from '../../components/Pagination.astro';
+import { getPublishedPosts } from '../../utils/posts';
+import { SITE } from '../../site.config.mjs';
+
+const posts = await getPublishedPosts();
+const totalPages = Math.max(1, Math.ceil(posts.length / SITE.postsPerPage));
+const items = posts.slice(0, SITE.postsPerPage);
+---
+
+<BaseLayout
+  title="Writing"
+  description={`Every post published on ${SITE.title} — notes on inference systems, scheduling, and performance engineering, newest first.`}
+>
+  <header class="page-head">
+    <h1 class="page-head__title">Writing</h1>
+    <p class="page-head__sub">{posts.length} {posts.length === 1 ? 'post' : 'posts'}, newest first.</p>
+  </header>
+
+  <div class="page-list">
+    {items.map((post) => <PostCard post={post} />)}
+  </div>
+
+  <Pagination
+    current={1}
+    total={totalPages}
+    nextUrl={totalPages > 1 ? '/posts/page/2' : undefined}
+  />
+</BaseLayout>
+
+<style>
+  .page-head {
+    max-width: var(--measure);
+    padding-bottom: var(--space-md);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .page-head__title {
+    font-family: var(--font-serif);
+    font-size: var(--step-3);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+  }
+
+  .page-head__sub {
+    margin-top: var(--space-2xs);
+    color: var(--text-muted);
+    font-size: var(--step--1);
+  }
+
+  .page-list {
+    margin-top: var(--space-sm);
+  }
+</style>

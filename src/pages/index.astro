@@ -1,0 +1,129 @@
+---
+/**
+ * Home page: a short intro, then the most recent writing.
+ */
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PostCard from '../components/PostCard.astro';
+import { getPublishedPosts, sortFeaturedFirst, collectTags } from '../utils/posts';
+import { SITE } from '../site.config.mjs';
+
+const posts = await getPublishedPosts();
+const recent = sortFeaturedFirst(posts).slice(0, 6);
+const tags = collectTags(posts).slice(0, 10);
+const hasMore = posts.length > recent.length;
+---
+
+<BaseLayout>
+  <section class="intro">
+    <p class="eyebrow">{SITE.author}</p>
+    <h1 class="intro__title">{SITE.tagline}</h1>
+    <p class="intro__body">
+      I work on inference systems and the unglamorous parts that make them fast: schedulers,
+      memory movement, and the places where theory meets a profiler. These are working notes —
+      some in English, some in Chinese, all longer than they needed to be.
+    </p>
+
+    {
+      tags.length > 0 && (
+        <ul class="tag-list intro__tags">
+          {tags.map((tag) => (
+            <li>
+              <a class="tag-pill" href={`/tags/${tag.slug}`}>
+                {tag.label}
+              </a>
+            </li>
+          ))}
+        </ul>
+      )
+    }
+  </section>
+
+  <section class="listing" aria-labelledby="recent-heading">
+    <div class="listing__head">
+      <h2 class="listing__title" id="recent-heading">Recent writing</h2>
+      {hasMore && <a class="listing__more" href="/posts">All posts →</a>}
+    </div>
+
+    {
+      recent.length > 0 ? (
+        <div class="listing__items">
+          {recent.map((post, index) => (
+            <PostCard post={post} featured={index === 0} />
+          ))}
+        </div>
+      ) : (
+        <p class="listing__empty">
+          Nothing published yet. Add a Markdown file under <code>src/content/posts/</code> to get
+          started.
+        </p>
+      )
+    }
+  </section>
+</BaseLayout>
+
+<style>
+  .intro {
+    max-width: var(--measure);
+    padding-bottom: var(--space-xl);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .intro__title {
+    margin-top: var(--space-xs);
+    font-family: var(--font-serif);
+    font-size: var(--step-4);
+    font-weight: 600;
+    letter-spacing: -0.025em;
+    line-height: 1.12;
+  }
+
+  .intro__body {
+    margin-top: var(--space-md);
+    font-size: var(--step-1);
+    line-height: 1.6;
+    color: var(--text-muted);
+  }
+
+  .intro__tags {
+    margin-top: var(--space-lg);
+  }
+
+  .listing {
+    margin-top: var(--space-xl);
+  }
+
+  .listing__head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-md);
+  }
+
+  .listing__title {
+    font-size: var(--step-0);
+    font-weight: 620;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+  }
+
+  .listing__more {
+    font-size: var(--step--1);
+    color: var(--text-muted);
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  .listing__more:hover {
+    color: var(--accent);
+  }
+
+  .listing__items {
+    margin-top: var(--space-sm);
+  }
+
+  .listing__empty {
+    margin-top: var(--space-md);
+    color: var(--text-muted);
+  }
+</style>

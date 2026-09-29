@@ -1,0 +1,14 @@
+---
+import { SITE, SOCIAL } from '../site.config.mjs';
+
+const year = new Date().getFullYear();
+---
+
+<footer class="site-footer">
+  <div class="site-footer__inner shell">
+    <p>© {year} {SITE.author}</p>
+    <nav class="site-footer__links" aria-label="Elsewhere">
+      {SOCIAL.map((item) => <a href={item.href}>{item.label}</a>)}
+    </nav>
+  </div>
+</footer>

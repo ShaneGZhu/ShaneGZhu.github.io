@@ -1,0 +1,104 @@
+---
+/**
+ * One entry in a post listing: date, title, description, tags.
+ */
+import type { Post } from '../utils/posts';
+import { formatDate, isoDate, readingTime, readingTimeLabel } from '../utils/format';
+import { tagSlug } from '../utils/posts';
+
+interface Props {
+  post: Post;
+  /** Larger treatment for the lead item on the home page. */
+  featured?: boolean;
+}
+
+const { post, featured = false } = Astro.props;
+const { title, description, pubDate, tags, lang, draft } = post.data;
+const minutes = readingTime(post.body);
+---
+
+<article class:list={['post-card', featured && 'post-card--featured']}>
+  <div class="post-card__meta">
+    <time datetime={isoDate(pubDate)}>{formatDate(pubDate, lang)}</time>
+    <span aria-hidden="true">·</span>
+    <span>{readingTimeLabel(minutes, lang)}</span>
+    {draft && <span class="post-card__draft">Draft</span>}
+  </div>
+
+  <h2 class="post-card__title" lang={lang}>
+    <a href={`/posts/${post.id}`}>{title}</a>
+  </h2>
+
+  <p class="post-card__excerpt" lang={lang}>{description}</p>
+
+  {
+    tags.length > 0 && (
+      <ul class="tag-list post-card__tags">
+        {tags.map((tag) => (
+          <li>
+            <a class="tag-pill" href={`/tags/${tagSlug(tag)}`}>
+              {tag}
+            </a>
+          </li>
+        ))}
+      </ul>
+    )
+  }
+</article>
+
+<style>
+  .post-card {
+    padding-block: var(--space-md);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .post-card:last-child {
+    border-bottom: 0;
+  }
+
+  .post-card__meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-xs);
+    font-size: var(--step--1);
+    color: var(--text-faint);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .post-card__draft {
+    padding: 0.05em 0.5em;
+    border-radius: 999px;
+    background-color: var(--callout-warning-bg);
+    color: var(--callout-warning-border);
+    font-size: 0.85em;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .post-card__title {
+    margin-top: var(--space-2xs);
+    font-family: var(--font-serif);
+    font-size: var(--step-2);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+  }
+
+  .post-card--featured .post-card__title {
+    font-size: var(--step-3);
+  }
+
+  .post-card__title a {
+    text-decoration: none;
+  }
+
+  .post-card__excerpt {
+    margin-top: var(--space-xs);
+    max-width: var(--measure);
+    color: var(--text-muted);
+  }
+
+  .post-card__tags {
+    margin-top: var(--space-sm);
+  }
+</style>

@@ -1,0 +1,73 @@
+---
+/**
+ * Post index, pages 2..n. Page 1 is `/posts`.
+ */
+import type { GetStaticPaths, Page } from 'astro';
+
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import PostCard from '../../../components/PostCard.astro';
+import Pagination from '../../../components/Pagination.astro';
+import { getPublishedPosts, type Post } from '../../../utils/posts';
+import { SITE } from '../../../site.config.mjs';
+
+export const getStaticPaths: GetStaticPaths = async ({ paginate }) => {
+  const posts = await getPublishedPosts();
+  // Page 1 is served by `/posts/index.astro`, so drop it here.
+  return paginate(posts, { pageSize: SITE.postsPerPage }).filter(
+    (entry) => entry.params.page !== '1' && entry.params.page !== undefined,
+  );
+};
+
+interface Props {
+  page: Page<Post>;
+}
+
+const { page } = Astro.props;
+const prevUrl = page.currentPage === 2 ? '/posts' : `/posts/page/${page.currentPage - 1}`;
+---
+
+<BaseLayout
+  title={`Writing — page ${page.currentPage}`}
+  description={`Every post published on ${SITE.title} — page ${page.currentPage} of ${page.lastPage}, newest first.`}
+>
+  <header class="page-head">
+    <h1 class="page-head__title">Writing</h1>
+    <p class="page-head__sub">{page.total} {page.total === 1 ? 'post' : 'posts'}, newest first.</p>
+  </header>
+
+  <div class="page-list">
+    {page.data.map((post) => <PostCard post={post} />)}
+  </div>
+
+  <Pagination
+    current={page.currentPage}
+    total={page.lastPage}
+    prevUrl={prevUrl}
+    nextUrl={page.url.next ? `/posts/page/${page.currentPage + 1}` : undefined}
+  />
+</BaseLayout>
+
+<style>
+  .page-head {
+    max-width: var(--measure);
+    padding-bottom: var(--space-md);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .page-head__title {
+    font-family: var(--font-serif);
+    font-size: var(--step-3);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+  }
+
+  .page-head__sub {
+    margin-top: var(--space-2xs);
+    color: var(--text-muted);
+    font-size: var(--step--1);
+  }
+
+  .page-list {
+    margin-top: var(--space-sm);
+  }
+</style>

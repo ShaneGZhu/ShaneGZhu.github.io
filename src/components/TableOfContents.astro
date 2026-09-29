@@ -1,0 +1,113 @@
+---
+/**
+ * Sticky table of contents built from the headings Astro extracted while
+ * rendering the post. Only h2/h3 are listed; deeper levels would make the rail
+ * noisy. Hidden entirely on narrow screens and when a post has fewer than two
+ * sections.
+ */
+import type { MarkdownHeading } from 'astro';
+
+interface Props {
+  headings: MarkdownHeading[];
+  lang?: 'en' | 'zh';
+}
+
+const { headings, lang = 'en' } = Astro.props;
+const items = headings.filter((heading) => heading.depth === 2 || heading.depth === 3);
+const label = lang === 'zh' ? '目录' : 'Contents';
+---
+
+{
+  items.length > 1 && (
+    <nav class="toc" aria-labelledby="toc-heading">
+      <p class="eyebrow" id="toc-heading">
+        {label}
+      </p>
+      <ol class="toc__list">
+        {items.map((heading) => (
+          <li class:list={['toc__item', heading.depth === 3 && 'toc__item--nested']}>
+            <a href={`#${heading.slug}`}>{heading.text}</a>
+          </li>
+        ))}
+      </ol>
+    </nav>
+  )
+}
+
+<style>
+  .toc {
+    position: sticky;
+    top: 5.5rem;
+    max-height: calc(100vh - 8rem);
+    overflow-y: auto;
+    padding-left: var(--space-md);
+    border-left: 1px solid var(--border);
+    font-size: var(--step--1);
+    line-height: 1.55;
+    /* Scrollbar only when it is actually needed. */
+    scrollbar-width: thin;
+  }
+
+  .toc__list {
+    margin: var(--space-xs) 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .toc__item + .toc__item {
+    margin-top: var(--space-xs);
+  }
+
+  .toc__item--nested {
+    padding-left: var(--space-sm);
+  }
+
+  .toc a {
+    color: var(--text-muted);
+    text-decoration: none;
+    display: block;
+  }
+
+  .toc a:hover {
+    color: var(--accent);
+  }
+
+  .toc a[aria-current='true'] {
+    color: var(--text);
+    font-weight: 600;
+  }
+</style>
+
+<script>
+  // Highlight the section currently in view. Purely decorative, so it degrades
+  // gracefully where IntersectionObserver is unavailable.
+  const links = Array.from(document.querySelectorAll<HTMLAnchorElement>('.toc a'));
+
+  if (links.length > 0 && 'IntersectionObserver' in window) {
+    const byId = new Map(links.map((link) => [decodeURIComponent(link.hash.slice(1)), link]));
+    const targets = [...byId.keys()]
+      .map((id) => document.getElementById(id))
+      .filter((element): element is HTMLElement => element !== null);
+
+    const visible = new Set<string>();
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) visible.add(entry.target.id);
+          else visible.delete(entry.target.id);
+        }
+
+        // The first heading in document order that is on screen wins.
+        const active = targets.find((target) => visible.has(target.id))?.id;
+        for (const [id, link] of byId) {
+          if (id === active) link.setAttribute('aria-current', 'true');
+          else link.removeAttribute('aria-current');
+        }
+      },
+      { rootMargin: '-80px 0px -70% 0px', threshold: 0 },
+    );
+
+    for (const target of targets) observer.observe(target);
+  }
+</script>

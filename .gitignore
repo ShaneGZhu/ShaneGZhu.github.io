@@ -1,0 +1,27 @@
+# Build output
+dist/
+.astro/
+
+# Dependencies
+node_modules/
+
+# Local caches
+.npm-cache/
+.cache/
+
+# Environment / secrets — never commit these
+.env
+.env.*
+!.env.example
+
+# Editor and OS noise
+.DS_Store
+.vscode/*
+!.vscode/extensions.json
+.idea/
+*.swp
+
+# Logs
+npm-debug.log*
+yarn-error.log*
+pnpm-debug.log*

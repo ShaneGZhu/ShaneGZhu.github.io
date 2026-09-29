@@ -1,0 +1,66 @@
+---
+/**
+ * About page. Edit the prose below directly — it is intentionally plain HTML in
+ * an Astro page rather than a content entry, since it is a one-off.
+ */
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { SITE, SOCIAL } from '../site.config.mjs';
+import '../styles/prose.css';
+---
+
+<BaseLayout
+  title="About"
+  description={`About ${SITE.author} — what I work on, what shows up on this site, and how to get in touch.`}
+>
+  <header class="page-head">
+    <h1 class="page-head__title">About</h1>
+  </header>
+
+  <div class="prose about">
+    <p>
+      I'm {SITE.author}. I build and profile inference systems — the schedulers, KV caches, and
+      data paths that decide whether a model serves ten requests a second or a thousand.
+    </p>
+
+    <h2>What lands here</h2>
+    <p>
+      Notes I wanted to exist while debugging something: how a subsystem actually behaves under
+      load, why the obvious optimization didn't help, what a benchmark was really measuring.
+      Posts are in English or Chinese depending on which one the topic wants.
+    </p>
+
+    <h2>Elsewhere</h2>
+    <ul>
+      {SOCIAL.map((item) => (
+        <li>
+          <a href={item.href}>{item.label}</a>
+        </li>
+      ))}
+    </ul>
+
+    <h2>Get in touch</h2>
+    <p>
+      The fastest route is a GitHub issue or discussion on the relevant repository. Corrections
+      are welcome and get credited.
+    </p>
+  </div>
+</BaseLayout>
+
+<style>
+  .page-head {
+    max-width: var(--measure);
+    padding-bottom: var(--space-md);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .page-head__title {
+    font-family: var(--font-serif);
+    font-size: var(--step-3);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+  }
+
+  .about {
+    margin-top: var(--space-lg);
+  }
+</style>

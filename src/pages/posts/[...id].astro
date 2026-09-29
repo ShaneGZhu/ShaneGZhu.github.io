@@ -1,0 +1,34 @@
+---
+/**
+ * The article route. One page per entry in the `posts` collection.
+ *
+ * `render()` gives us the compiled body plus the headings Astro collected, which
+ * the layout turns into a table of contents.
+ */
+import type { GetStaticPaths } from 'astro';
+import { render } from 'astro:content';
+
+import PostLayout from '../../layouts/PostLayout.astro';
+import { getPublishedPosts, getNeighbours, type Post } from '../../utils/posts';
+
+export const getStaticPaths: GetStaticPaths = async () => {
+  const posts = await getPublishedPosts();
+  return posts.map((post) => ({
+    params: { id: post.id },
+    props: { post, ...getNeighbours(posts, post.id) },
+  }));
+};
+
+interface Props {
+  post: Post;
+  newer?: Post;
+  older?: Post;
+}
+
+const { post, newer, older } = Astro.props;
+const { Content, headings } = await render(post);
+---
+
+<PostLayout post={post} headings={headings} newer={newer} older={older}>
+  <Content />
+</PostLayout>

@@ -1,0 +1,68 @@
+---
+/**
+ * Posts for a single tag.
+ */
+import type { GetStaticPaths } from 'astro';
+
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PostCard from '../../components/PostCard.astro';
+import { getPublishedPosts, collectTags, postsWithTag, type Post } from '../../utils/posts';
+
+export const getStaticPaths: GetStaticPaths = async () => {
+  const posts = await getPublishedPosts();
+  return collectTags(posts).map((tag) => ({
+    params: { tag: tag.slug },
+    props: { label: tag.label, posts: postsWithTag(posts, tag.slug) },
+  }));
+};
+
+interface Props {
+  label: string;
+  posts: Post[];
+}
+
+const { label, posts } = Astro.props;
+---
+
+<BaseLayout
+  title={`Tagged “${label}”`}
+  description={`Every post tagged “${label}” — ${posts.length} ${posts.length === 1 ? 'article' : 'articles'} on this topic, newest first.`}
+>
+  <header class="page-head">
+    <p class="eyebrow">Tag</p>
+    <h1 class="page-head__title">{label}</h1>
+    <p class="page-head__sub">
+      {posts.length} {posts.length === 1 ? 'post' : 'posts'} · <a href="/tags">all tags</a>
+    </p>
+  </header>
+
+  <div class="page-list">
+    {posts.map((post) => <PostCard post={post} />)}
+  </div>
+</BaseLayout>
+
+<style>
+  .page-head {
+    max-width: var(--measure);
+    padding-bottom: var(--space-md);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .page-head__title {
+    margin-top: var(--space-2xs);
+    font-family: var(--font-serif);
+    font-size: var(--step-3);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+  }
+
+  .page-head__sub {
+    margin-top: var(--space-2xs);
+    color: var(--text-muted);
+    font-size: var(--step--1);
+  }
+
+  .page-list {
+    margin-top: var(--space-sm);
+  }
+</style>

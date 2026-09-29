@@ -1,0 +1,225 @@
+---
+/**
+ * Article page: header block, optional cover image, table of contents rail,
+ * the rendered body, and prev/next navigation.
+ */
+import { Image } from 'astro:assets';
+import type { MarkdownHeading } from 'astro';
+
+import BaseLayout from './BaseLayout.astro';
+import TableOfContents from '../components/TableOfContents.astro';
+import type { Post } from '../utils/posts';
+import { tagSlug } from '../utils/posts';
+import { formatDate, isoDate, readingTime, readingTimeLabel } from '../utils/format';
+import '../styles/prose.css';
+
+interface Props {
+  post: Post;
+  headings: MarkdownHeading[];
+  newer?: Post;
+  older?: Post;
+}
+
+const { post, headings, newer, older } = Astro.props;
+const { title, description, pubDate, updatedDate, tags, lang, cover, coverAlt, draft } = post.data;
+
+const minutes = readingTime(post.body);
+const updatedLabel = lang === 'zh' ? '更新于' : 'Updated';
+const olderLabel = lang === 'zh' ? '较早的文章' : 'Older post';
+const newerLabel = lang === 'zh' ? '较新的文章' : 'Newer post';
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  lang={lang}
+  type="article"
+  image={cover?.src}
+  publishedTime={pubDate}
+  modifiedTime={updatedDate}
+  noindex={draft}
+>
+  <article class="post">
+    <header class="post__header">
+      <div class="post__meta">
+        <time datetime={isoDate(pubDate)}>{formatDate(pubDate, lang)}</time>
+        <span aria-hidden="true">·</span>
+        <span>{readingTimeLabel(minutes, lang)}</span>
+        {
+          updatedDate && (
+            <>
+              <span aria-hidden="true">·</span>
+              <span>
+                {updatedLabel} <time datetime={isoDate(updatedDate)}>{formatDate(updatedDate, lang)}</time>
+              </span>
+            </>
+          )
+        }
+      </div>
+
+      <h1 class="post__title" lang={lang}>{title}</h1>
+      <p class="post__description" lang={lang}>{description}</p>
+
+      {
+        tags.length > 0 && (
+          <ul class="tag-list post__tags">
+            {tags.map((tag) => (
+              <li>
+                <a class="tag-pill" href={`/tags/${tagSlug(tag)}`}>
+                  {tag}
+                </a>
+              </li>
+            ))}
+          </ul>
+        )
+      }
+    </header>
+
+    {
+      cover && (
+        <figure class="post__cover">
+          <Image src={cover} alt={coverAlt ?? ''} widths={[640, 960, 1280]} loading="eager" />
+          {coverAlt && <figcaption class="figure-caption">{coverAlt}</figcaption>}
+        </figure>
+      )
+    }
+
+    <div class="post__body">
+      <div class="prose" lang={lang}>
+        <slot />
+      </div>
+
+      <aside class="post__rail">
+        <TableOfContents headings={headings} lang={lang} />
+      </aside>
+    </div>
+
+    {
+      (newer || older) && (
+        <nav class="post__nav" aria-label="More posts">
+          {older ? (
+            <a class="post__nav-link" href={`/posts/${older.id}`} rel="prev">
+              <span class="eyebrow">{olderLabel}</span>
+              <span class="post__nav-title">{older.data.title}</span>
+            </a>
+          ) : (
+            <span />
+          )}
+          {newer && (
+            <a class="post__nav-link post__nav-link--next" href={`/posts/${newer.id}`} rel="next">
+              <span class="eyebrow">{newerLabel}</span>
+              <span class="post__nav-title">{newer.data.title}</span>
+            </a>
+          )}
+        </nav>
+      )
+    }
+  </article>
+</BaseLayout>
+
+<style>
+  .post__header {
+    max-width: var(--measure);
+  }
+
+  .post__meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-xs);
+    font-size: var(--step--1);
+    color: var(--text-faint);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .post__title {
+    margin-top: var(--space-xs);
+    font-family: var(--font-serif);
+    font-size: var(--step-4);
+    font-weight: 600;
+    letter-spacing: -0.025em;
+    line-height: 1.12;
+  }
+
+  .post__description {
+    margin-top: var(--space-sm);
+    font-size: var(--step-1);
+    line-height: 1.55;
+    color: var(--text-muted);
+  }
+
+  .post__tags {
+    margin-top: var(--space-md);
+  }
+
+  .post__cover {
+    margin: var(--space-lg) 0 0;
+  }
+
+  .post__cover img {
+    width: 100%;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border);
+  }
+
+  .post__body {
+    margin-top: var(--space-lg);
+    display: grid;
+    gap: var(--space-xl);
+    /* Body column plus a TOC rail; the rail collapses away below 64rem. */
+    grid-template-columns: minmax(0, var(--measure)) minmax(0, 15rem);
+    align-items: start;
+  }
+
+  .post__nav {
+    margin-top: var(--space-2xl);
+    padding-top: var(--space-lg);
+    border-top: 1px solid var(--border);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-md);
+  }
+
+  .post__nav-link {
+    display: block;
+    text-decoration: none;
+    color: var(--text-muted);
+  }
+
+  .post__nav-link--next {
+    text-align: right;
+  }
+
+  .post__nav-title {
+    display: block;
+    margin-top: var(--space-2xs);
+    font-family: var(--font-serif);
+    font-size: var(--step-1);
+    color: var(--text);
+    text-wrap: balance;
+  }
+
+  .post__nav-link:hover .post__nav-title {
+    color: var(--accent);
+  }
+
+  @media (max-width: 64rem) {
+    .post__body {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .post__rail {
+      display: none;
+    }
+  }
+
+  @media (max-width: 40rem) {
+    .post__nav {
+      grid-template-columns: 1fr;
+    }
+
+    .post__nav-link--next {
+      text-align: left;
+    }
+  }
+</style>

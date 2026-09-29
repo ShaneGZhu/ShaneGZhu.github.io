@@ -1,0 +1,110 @@
+---
+/**
+ * Compact chronological list of everything, grouped by year.
+ */
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { getPublishedPosts, groupByYear } from '../utils/posts';
+import { isoDate } from '../utils/format';
+
+const posts = await getPublishedPosts();
+const years = groupByYear(posts);
+---
+
+<BaseLayout
+  title="Archive"
+  description="A complete chronological index of every post, grouped by year of publication."
+>
+  <header class="page-head">
+    <h1 class="page-head__title">Archive</h1>
+    <p class="page-head__sub">{posts.length} {posts.length === 1 ? 'post' : 'posts'}</p>
+  </header>
+
+  {
+    years.map((group) => (
+      <section class="year" aria-labelledby={`year-${group.year}`}>
+        <h2 class="year__label" id={`year-${group.year}`}>
+          {group.year}
+        </h2>
+        <ul class="year__list">
+          {group.posts.map((post) => (
+            <li class="year__item">
+              <time class="year__date" datetime={isoDate(post.data.pubDate)}>
+                {isoDate(post.data.pubDate).slice(5)}
+              </time>
+              <a class="year__link" href={`/posts/${post.id}`} lang={post.data.lang}>
+                {post.data.title}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </section>
+    ))
+  }
+
+  {posts.length === 0 && <p class="empty">Nothing published yet.</p>}
+</BaseLayout>
+
+<style>
+  .page-head {
+    max-width: var(--measure);
+    padding-bottom: var(--space-md);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .page-head__title {
+    font-family: var(--font-serif);
+    font-size: var(--step-3);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+  }
+
+  .page-head__sub {
+    margin-top: var(--space-2xs);
+    color: var(--text-muted);
+    font-size: var(--step--1);
+  }
+
+  .year {
+    margin-top: var(--space-lg);
+    max-width: var(--measure);
+  }
+
+  .year__label {
+    font-size: var(--step--1);
+    font-weight: 620;
+    letter-spacing: 0.1em;
+    color: var(--text-faint);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .year__list {
+    margin: var(--space-xs) 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .year__item {
+    display: grid;
+    grid-template-columns: 3.5rem 1fr;
+    gap: var(--space-sm);
+    align-items: baseline;
+    padding-block: var(--space-xs);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .year__date {
+    color: var(--text-faint);
+    font-size: var(--step--1);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .year__link {
+    text-decoration: none;
+    text-wrap: pretty;
+  }
+
+  .empty {
+    margin-top: var(--space-lg);
+    color: var(--text-muted);
+  }
+</style>

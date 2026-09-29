@@ -1,0 +1,141 @@
+---
+/**
+ * Base HTML document: metadata, theme bootstrap, header and footer.
+ *
+ * Every page renders through this. `lang` defaults to the site language but
+ * individual posts pass their own so browsers and screen readers pick the right
+ * pronunciation and line-breaking rules for Chinese versus English.
+ */
+import '../styles/global.css';
+import 'katex/dist/katex.min.css';
+
+import { Font } from 'astro:assets';
+
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { SITE } from '../site.config.mjs';
+
+interface Props {
+  title?: string;
+  description?: string;
+  lang?: string;
+  /** Absolute or site-relative image used for link previews. */
+  image?: string;
+  /** `article` for posts, `website` elsewhere. */
+  type?: 'website' | 'article';
+  publishedTime?: Date;
+  modifiedTime?: Date;
+  /** Keep a page out of search indexes (used by the 404 page). */
+  noindex?: boolean;
+}
+
+const {
+  title,
+  description = SITE.description,
+  lang = SITE.defaultLanguage,
+  image,
+  type = 'website',
+  publishedTime,
+  modifiedTime,
+  noindex = false,
+} = Astro.props;
+
+const pageTitle = title ? `${title} · ${SITE.title}` : `${SITE.title} — ${SITE.tagline}`;
+const canonical = new URL(Astro.url.pathname, Astro.site ?? SITE.url);
+const ogImage = image ? new URL(image, Astro.site ?? SITE.url) : undefined;
+---
+
+<!doctype html>
+<html lang={lang} data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    {/*
+      Self-hosted fonts. `preload` covers only the body weight so the first
+      paragraph paints without a flash; the rest load on demand.
+    */}
+    <Font cssVariable="--font-inter" preload={[{ weight: 400, style: 'normal' }]} />
+    <Font cssVariable="--font-newsreader" preload={[{ weight: 600, style: 'normal' }]} />
+
+    <title>{pageTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    {noindex && <meta name="robots" content="noindex, follow" />}
+
+    <meta property="og:type" content={type} />
+    <meta property="og:site_name" content={SITE.title} />
+    <meta property="og:title" content={title ?? SITE.title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:locale" content={lang === 'zh' ? 'zh_CN' : SITE.locale} />
+    {ogImage && <meta property="og:image" content={ogImage} />}
+    <meta name="twitter:card" content={ogImage ? 'summary_large_image' : 'summary'} />
+
+    {publishedTime && <meta property="article:published_time" content={publishedTime.toISOString()} />}
+    {modifiedTime && <meta property="article:modified_time" content={modifiedTime.toISOString()} />}
+
+    <link
+      rel="alternate"
+      type="application/rss+xml"
+      title={`${SITE.title} — RSS`}
+      href={new URL('rss.xml', Astro.site ?? SITE.url)}
+    />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+
+    {/*
+      Theme is resolved before first paint to avoid a flash of the wrong colours.
+      It is a blocking inline script by design; keep it small.
+    */}
+    <script is:inline>
+      (function () {
+        try {
+          var stored = localStorage.getItem('theme');
+          var prefersDark =
+            window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+          var theme = stored === 'light' || stored === 'dark' ? stored : prefersDark ? 'dark' : 'light';
+          document.documentElement.dataset.theme = theme;
+        } catch (error) {
+          /* Private browsing can block localStorage; the light default stands. */
+        }
+      })();
+    </script>
+  </head>
+
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <Header />
+    <main class="main shell" id="main">
+      <slot />
+    </main>
+    <Footer />
+
+    <script>
+      // Theme toggle. Registered once per page load; the stored value wins on
+      // the next visit, so an explicit choice survives navigation.
+      const toggle = document.querySelector<HTMLButtonElement>('[data-theme-toggle]');
+
+      function syncLabel(theme: string) {
+        toggle?.setAttribute(
+          'aria-label',
+          theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme',
+        );
+        toggle?.setAttribute('aria-pressed', String(theme === 'dark'));
+      }
+
+      syncLabel(document.documentElement.dataset.theme ?? 'light');
+
+      toggle?.addEventListener('click', () => {
+        const next = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
+        document.documentElement.dataset.theme = next;
+        syncLabel(next);
+        try {
+          localStorage.setItem('theme', next);
+        } catch (error) {
+          /* Ignore storage failures; the toggle still works for this session. */
+        }
+      });
+    </script>
+  </body>
+</html>

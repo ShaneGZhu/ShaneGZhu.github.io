@@ -1,0 +1,478 @@
+/*
+ * Article body styling: everything rendered from Markdown lives under `.prose`.
+ *
+ * The goals are the ones that make long technical posts readable: a fixed
+ * measure, generous vertical rhythm, figures and code blocks that break out of
+ * the text column slightly, and math that never overflows the page.
+ */
+
+.prose {
+  max-width: var(--measure);
+  font-size: var(--step-0);
+  line-height: 1.78;
+  color: var(--text);
+  word-break: normal;
+  overflow-wrap: break-word;
+
+  /*
+   * Figures, code blocks and tables extend past the text column by `--bleed` on
+   * each side, which gives wide content room without widening the prose measure.
+   * Below 52rem the page gutter is already tight, so the bleed collapses to zero
+   * rather than pushing content against the viewport edge.
+   */
+  --bleed: 2rem;
+}
+
+@media (max-width: 52rem) {
+  .prose {
+    --bleed: 0rem;
+  }
+}
+
+/* CJK text reads better with a touch more leading. */
+.prose[lang='zh'],
+.prose[lang^='zh-'] {
+  line-height: 1.9;
+  letter-spacing: 0.01em;
+}
+
+/* ---------- Block rhythm ---------- */
+
+.prose > * + * {
+  margin-top: var(--space-md);
+}
+
+.prose > h2 {
+  margin-top: var(--space-xl);
+  font-size: var(--step-2);
+  padding-bottom: var(--space-2xs);
+  border-bottom: 1px solid var(--border);
+}
+
+.prose > h3 {
+  margin-top: var(--space-lg);
+  font-size: var(--step-1);
+}
+
+.prose > h4 {
+  margin-top: var(--space-lg);
+  font-size: var(--step-0);
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.prose :is(h2, h3, h4, h5, h6) {
+  scroll-margin-top: 5rem;
+}
+
+/*
+ * Anchor affordance: the `#` appears on hover and is hidden from assistive tech.
+ * The glyph comes from CSS rather than the DOM so it never ends up in the
+ * heading text used for the table of contents or the document outline.
+ */
+.prose :is(h2, h3, h4) .heading-anchor {
+  margin-left: 0.4em;
+  color: var(--text-faint);
+  text-decoration: none;
+  font-weight: 400;
+  opacity: 0;
+  transition: opacity var(--transition);
+}
+
+.prose :is(h2, h3, h4) .heading-anchor::before {
+  content: '#';
+}
+
+.prose :is(h2, h3, h4):hover .heading-anchor,
+.prose .heading-anchor:focus-visible {
+  opacity: 1;
+}
+
+.prose a {
+  color: var(--accent);
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, var(--accent) 40%, transparent);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.2em;
+}
+
+.prose a:hover {
+  text-decoration-color: currentColor;
+}
+
+.prose strong {
+  font-weight: 650;
+}
+
+.prose hr {
+  margin-block: var(--space-xl);
+  border: 0;
+  height: 1px;
+  background: linear-gradient(to right, transparent, var(--border-strong), transparent);
+}
+
+/* ---------- Lists ---------- */
+
+.prose :is(ul, ol) {
+  padding-left: 1.5em;
+  margin-block: 0;
+}
+
+.prose li + li {
+  margin-top: var(--space-2xs);
+}
+
+.prose li > :is(ul, ol) {
+  margin-top: var(--space-2xs);
+}
+
+.prose li::marker {
+  color: var(--text-faint);
+}
+
+/* GFM task lists. */
+.prose li:has(> input[type='checkbox']) {
+  list-style: none;
+  margin-left: -1.35em;
+}
+
+.prose input[type='checkbox'] {
+  margin-right: 0.5em;
+  accent-color: var(--accent);
+}
+
+/* ---------- Blockquote ---------- */
+
+.prose blockquote {
+  margin: 0;
+  padding: var(--space-xs) 0 var(--space-xs) var(--space-md);
+  border-left: 3px solid var(--accent);
+  color: var(--text-muted);
+  font-style: normal;
+}
+
+.prose blockquote > * + * {
+  margin-top: var(--space-sm);
+}
+
+/* ---------- Figures & images ---------- */
+
+.prose .figure {
+  margin-block: var(--space-lg);
+  /* Images bleed a little past the text measure without breaking the grid. */
+  width: calc(100% + var(--bleed) * 2);
+  margin-inline: calc(var(--bleed) * -1);
+}
+
+.prose .figure img {
+  width: 100%;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  background-color: var(--bg-subtle);
+}
+
+.prose .figure-caption {
+  margin-top: var(--space-xs);
+  padding-inline: var(--bleed);
+  font-size: var(--step--1);
+  line-height: 1.6;
+  color: var(--text-faint);
+  text-align: center;
+}
+
+/* An inline image (inside a sentence) keeps its baseline. */
+.prose p > img {
+  display: inline-block;
+  vertical-align: middle;
+  border-radius: var(--radius-sm);
+}
+
+/* ---------- Code ---------- */
+
+.prose :not(pre) > code {
+  padding: 0.15em 0.4em;
+  border-radius: var(--radius-sm);
+  background-color: var(--bg-code);
+  border: 1px solid var(--border);
+  font-family: var(--font-mono);
+  /*
+   * `em` would compound inside already-smaller contexts (table cells,
+   * footnotes), pushing code below a legible size. The floor keeps it readable
+   * wherever it appears.
+   */
+  font-size: max(0.88em, 0.8rem);
+  word-break: break-word;
+}
+
+.prose pre {
+  margin-block: var(--space-lg);
+  padding: var(--space-md);
+  width: calc(100% + var(--bleed) * 2);
+  margin-inline: calc(var(--bleed) * -1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  overflow-x: auto;
+  font-family: var(--font-mono);
+  font-size: var(--step--1);
+  line-height: 1.65;
+  tab-size: 2;
+  /* Prevents iOS from inflating monospace text. */
+  -webkit-text-size-adjust: 100%;
+}
+
+.prose pre > code {
+  display: block;
+  padding: 0;
+  border: 0;
+  background: none;
+  font-size: inherit;
+  min-width: max-content;
+}
+
+/*
+ * Shiki is configured with two themes and `defaultColor: false`, so Astro emits
+ * `--shiki-light` / `--shiki-dark` custom properties on `pre.astro-code` and on
+ * every token span, and paints nothing itself. These rules pick one set per
+ * theme. The class is `astro-code` (Astro's own name); `.shiki` is kept as a
+ * fallback in case that ever changes back.
+ */
+[data-theme='light'] .prose :is(.astro-code, .shiki) {
+  color: var(--shiki-light);
+  /* The wrapper surface follows the theme, not Shiki's own background. */
+  background-color: var(--bg-code);
+}
+
+[data-theme='dark'] .prose :is(.astro-code, .shiki) {
+  color: var(--shiki-dark);
+  background-color: var(--bg-code);
+}
+
+[data-theme='light'] .prose :is(.astro-code, .shiki) span {
+  color: var(--shiki-light, inherit);
+  font-style: var(--shiki-light-font-style, inherit);
+  font-weight: var(--shiki-light-font-weight, inherit);
+  text-decoration: var(--shiki-light-text-decoration, inherit);
+}
+
+[data-theme='dark'] .prose :is(.astro-code, .shiki) span {
+  color: var(--shiki-dark, inherit);
+  font-style: var(--shiki-dark-font-style, inherit);
+  font-weight: var(--shiki-dark-font-weight, inherit);
+  text-decoration: var(--shiki-dark-text-decoration, inherit);
+}
+
+/* A `pre` with no language has no Shiki variables; give it the body text colour. */
+.prose pre:not(.astro-code):not(.shiki) {
+  background-color: var(--bg-code);
+  color: var(--text);
+}
+
+/* ---------- Tables ---------- */
+
+.prose .table-wrapper {
+  margin-block: var(--space-lg);
+  width: calc(100% + var(--bleed) * 2);
+  margin-inline: calc(var(--bleed) * -1);
+  overflow-x: auto;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+}
+
+.prose table {
+  /* `min-content` lets a wide table exceed the wrapper and scroll inside it. */
+  width: max(100%, min-content);
+  border-collapse: collapse;
+  font-size: var(--step--1);
+  line-height: 1.6;
+}
+
+.prose :is(th, td) {
+  padding: var(--space-xs) var(--space-sm);
+  text-align: left;
+  vertical-align: top;
+  border-bottom: 1px solid var(--border);
+}
+
+.prose th {
+  background-color: var(--bg-subtle);
+  font-weight: 620;
+  white-space: nowrap;
+}
+
+.prose tbody tr:last-child :is(th, td) {
+  border-bottom: 0;
+}
+
+/* ---------- Callouts (::: directives) ---------- */
+
+.prose .callout {
+  margin-block: var(--space-lg);
+  padding: var(--space-sm) var(--space-md);
+  border-left: 3px solid var(--callout-note-border);
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+  background-color: var(--callout-note-bg);
+  font-size: calc(var(--step-0) * 0.96);
+}
+
+.prose .callout > * + * {
+  margin-top: var(--space-xs);
+}
+
+.prose .callout-title {
+  font-size: var(--step--1);
+  font-weight: 650;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--callout-note-border);
+}
+
+.prose .callout-tip {
+  border-left-color: var(--callout-tip-border);
+  background-color: var(--callout-tip-bg);
+}
+.prose .callout-tip .callout-title {
+  color: var(--callout-tip-border);
+}
+
+.prose .callout-info {
+  border-left-color: var(--callout-info-border);
+  background-color: var(--callout-info-bg);
+}
+.prose .callout-info .callout-title {
+  color: var(--callout-info-border);
+}
+
+.prose .callout-warning {
+  border-left-color: var(--callout-warning-border);
+  background-color: var(--callout-warning-bg);
+}
+.prose .callout-warning .callout-title {
+  color: var(--callout-warning-border);
+}
+
+.prose .callout-danger {
+  border-left-color: var(--callout-danger-border);
+  background-color: var(--callout-danger-bg);
+}
+.prose .callout-danger .callout-title {
+  color: var(--callout-danger-border);
+}
+
+.prose .callout-quote {
+  border-left-color: var(--callout-quote-border);
+  background-color: var(--callout-quote-bg);
+}
+.prose .callout-quote .callout-title {
+  color: var(--callout-quote-border);
+}
+
+/* ---------- Math (KaTeX) ---------- */
+
+.prose .math-display {
+  margin-block: var(--space-lg);
+  /*
+   * An equation wider than the column scrolls horizontally instead of
+   * overflowing the page. `overflow-y: hidden` would clip tall constructs
+   * (sums, fractions, stacked braces) that legitimately exceed the line box, so
+   * it stays visible and only the x axis scrolls.
+   */
+  overflow-x: auto;
+  padding-block: var(--space-2xs);
+  text-align: center;
+}
+
+.prose .math-inline {
+  /* Keeps a tall inline formula from stretching the surrounding line. */
+  display: inline-block;
+  vertical-align: baseline;
+}
+
+.prose .katex {
+  font-size: 1.04em;
+}
+
+.prose .math-display .katex-display {
+  margin: 0;
+}
+
+.prose .math-error {
+  padding: 0.1em 0.35em;
+  border-radius: var(--radius-sm);
+  background-color: var(--callout-danger-bg);
+  color: var(--callout-danger-border);
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+}
+
+/* ---------- Footnotes ---------- */
+
+.prose .footnotes {
+  margin-top: var(--space-xl);
+  padding-top: var(--space-md);
+  border-top: 1px solid var(--border);
+  font-size: var(--step--1);
+  color: var(--text-muted);
+}
+
+.prose .footnotes h2 {
+  font-size: var(--step-0);
+  border: 0;
+  margin-bottom: var(--space-xs);
+}
+
+.prose sup a {
+  text-decoration: none;
+  padding-inline: 0.15em;
+}
+
+/*
+ * The GFM back-reference arrow sits inside the already-smaller footnotes block,
+ * and repeat references nest a `sup` inside it. Reset both to the footnote text
+ * size so they stay clickable and legible instead of compounding down twice.
+ */
+.prose .footnotes a[data-footnote-backref],
+.prose .footnotes a[data-footnote-backref] sup {
+  font-size: var(--step--1);
+  vertical-align: baseline;
+  line-height: inherit;
+}
+
+/* ---------- Superscript / subscript ---------- */
+
+.prose :is(sup, sub) {
+  /* Floored for the same reason as inline code: these nest inside small text. */
+  font-size: max(0.75em, 0.75rem);
+  line-height: 0;
+}
+
+/* ---------- Details / summary ---------- */
+
+.prose details {
+  margin-block: var(--space-lg);
+  padding: var(--space-sm) var(--space-md);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background-color: var(--bg-subtle);
+}
+
+.prose summary {
+  cursor: pointer;
+  font-weight: 620;
+}
+
+.prose details[open] summary {
+  margin-bottom: var(--space-xs);
+}
+
+/* ---------- Keyboard ---------- */
+
+.prose kbd {
+  padding: 0.1em 0.4em;
+  border: 1px solid var(--border-strong);
+  border-bottom-width: 2px;
+  border-radius: var(--radius-sm);
+  background-color: var(--bg-raised);
+  font-family: var(--font-mono);
+  font-size: 0.85em;
+}

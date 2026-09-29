@@ -1,0 +1,6 @@
+# Allow everything; the only pages excluded from indexing opt out via a
+# per-page `noindex` meta tag.
+User-agent: *
+Allow: /
+
+Sitemap: https://shanegzhu.github.io/sitemap-index.xml
