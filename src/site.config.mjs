@@ -8,11 +8,14 @@
  */
 export const SITE = {
   url: 'https://shanegzhu.github.io',
-  title: 'Shane G. Zhu',
-  tagline: 'Notes on systems, inference, and the machinery underneath.',
+  title: 'Shengguang Zhu',
+  tagline: 'Making distributed training and inference as fast and scalable as possible.',
   description:
-    'Long-form notes on distributed systems, LLM inference engines, and performance engineering — by Shane G. Zhu.',
-  author: 'Shane G. Zhu',
+    'ML systems engineer working on RL infrastructure, SGLang, and high-throughput LLM inference. Notes on schedulers, kernels, and the systems side of machine learning.',
+  author: 'Shengguang Zhu',
+  /** Shown as a subtitle under the name. */
+  role: 'ML Systems Engineer · High-Performance Computing',
+  email: 'shengguangzhu@qq.com',
   // Used as the default `lang` attribute; individual posts can override it.
   defaultLanguage: 'en',
   locale: 'en_US',
@@ -28,5 +31,30 @@ export const NAV = [
 
 export const SOCIAL = [
   { label: 'GitHub', href: 'https://github.com/ShaneGZhu' },
+  { label: 'Zhihu', href: 'https://www.zhihu.com/people/zhu-sheng-guang-30' },
+  { label: 'Rednote', href: 'https://www.xiaohongshu.com/user/profile/5c596598000000001200e203' },
+  { label: 'Email', href: 'mailto:shengguangzhu@qq.com' },
   { label: 'RSS', href: '/rss.xml' },
+];
+
+/** What I work on — shown on the home page and the About page. */
+export const FOCUS = [
+  {
+    title: 'RL Infrastructure',
+    body: 'Building and optimizing reinforcement learning training and inference pipelines.',
+  },
+  {
+    title: 'SGLang & LLM Inference',
+    body: 'Deeply engaged with SGLang to push the boundaries of LLM serving.',
+  },
+  {
+    title: 'Kernel Optimization',
+    body: 'Designing and tuning high-performance custom kernels.',
+  },
+  {
+    title: 'Writing',
+    body: 'Maintaining MLsys-Note, an open space for notes and code on AI infrastructure.',
+    href: 'https://github.com/ShaneGZhu/MLsys-Note',
+    linkLabel: 'MLsys-Note',
+  },
 ];

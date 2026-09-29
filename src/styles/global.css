@@ -55,7 +55,7 @@
   --border-strong: #cfcec5;
   --text: #1c1b19;
   --text-muted: #61605a;
-  --text-faint: #8d8c84;
+  --text-faint: #706f68;
   --accent: #9a3b1f;
   --accent-hover: #7d2f18;
   --accent-soft: #f6ece7;
@@ -63,18 +63,30 @@
   --shadow-sm: 0 1px 2px rgb(28 27 25 / 6%);
   --shadow-md: 0 8px 28px -12px rgb(28 27 25 / 18%);
 
+  /*
+   * Callouts carry three colours each: the left stripe (`border`), the tinted
+   * surface (`bg`), and the label (`text`). The label is darker than the stripe
+   * on purpose — a stripe only has to be visible, but the label is body text and
+   * has to clear WCAG AA (4.5:1) against its own tinted background.
+   */
   --callout-note-border: #6b7a8f;
   --callout-note-bg: #eef1f5;
+  --callout-note-text: #4e5c6e;
   --callout-tip-border: #3f7d58;
   --callout-tip-bg: #ebf4ee;
+  --callout-tip-text: #2f6342;
   --callout-info-border: #3d6f96;
   --callout-info-bg: #eaf1f7;
+  --callout-info-text: #315874;
   --callout-warning-border: #a97116;
   --callout-warning-bg: #faf2e3;
+  --callout-warning-text: #7d530e;
   --callout-danger-border: #a53a2c;
   --callout-danger-bg: #fbecea;
+  --callout-danger-text: #93331f;
   --callout-quote-border: #8d8c84;
   --callout-quote-bg: #f4f4f0;
+  --callout-quote-text: #5d5c56;
 }
 
 [data-theme='dark'] {
@@ -88,7 +100,7 @@
   --border-strong: #3d3d45;
   --text: #e8e6e1;
   --text-muted: #a3a19b;
-  --text-faint: #75736d;
+  --text-faint: #8c8a83;
   --accent: #e08b6b;
   --accent-hover: #efa385;
   --accent-soft: #2a1d17;
@@ -98,16 +110,22 @@
 
   --callout-note-border: #7d8ea6;
   --callout-note-bg: #1a1e24;
+  --callout-note-text: #9aabc2;
   --callout-tip-border: #5fa97c;
   --callout-tip-bg: #16211b;
+  --callout-tip-text: #78c295;
   --callout-info-border: #5c93bd;
   --callout-info-bg: #161f27;
+  --callout-info-text: #74acd6;
   --callout-warning-border: #cf9c3f;
   --callout-warning-bg: #221c11;
+  --callout-warning-text: #e0ad52;
   --callout-danger-border: #cf6553;
   --callout-danger-bg: #241514;
+  --callout-danger-text: #e37c6a;
   --callout-quote-border: #5a5954;
   --callout-quote-bg: #1a1a1d;
+  --callout-quote-text: #a3a19b;
 }
 
 *,

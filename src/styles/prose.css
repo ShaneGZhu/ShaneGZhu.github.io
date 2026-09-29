@@ -324,7 +324,7 @@
   font-weight: 650;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: var(--callout-note-border);
+  color: var(--callout-note-text);
 }
 
 .prose .callout-tip {
@@ -332,7 +332,7 @@
   background-color: var(--callout-tip-bg);
 }
 .prose .callout-tip .callout-title {
-  color: var(--callout-tip-border);
+  color: var(--callout-tip-text);
 }
 
 .prose .callout-info {
@@ -340,7 +340,7 @@
   background-color: var(--callout-info-bg);
 }
 .prose .callout-info .callout-title {
-  color: var(--callout-info-border);
+  color: var(--callout-info-text);
 }
 
 .prose .callout-warning {
@@ -348,7 +348,7 @@
   background-color: var(--callout-warning-bg);
 }
 .prose .callout-warning .callout-title {
-  color: var(--callout-warning-border);
+  color: var(--callout-warning-text);
 }
 
 .prose .callout-danger {
@@ -356,7 +356,7 @@
   background-color: var(--callout-danger-bg);
 }
 .prose .callout-danger .callout-title {
-  color: var(--callout-danger-border);
+  color: var(--callout-danger-text);
 }
 
 .prose .callout-quote {
@@ -364,7 +364,7 @@
   background-color: var(--callout-quote-bg);
 }
 .prose .callout-quote .callout-title {
-  color: var(--callout-quote-border);
+  color: var(--callout-quote-text);
 }
 
 /* ---------- Math (KaTeX) ---------- */
@@ -400,7 +400,7 @@
   padding: 0.1em 0.35em;
   border-radius: var(--radius-sm);
   background-color: var(--callout-danger-bg);
-  color: var(--callout-danger-border);
+  color: var(--callout-danger-text);
   font-family: var(--font-mono);
   font-size: 0.9em;
 }

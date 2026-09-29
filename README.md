@@ -1,8 +1,9 @@
 # ShaneGZhu.github.io
 
-Personal blog, built with [Astro](https://astro.build) and deployed to GitHub
-Pages. Posts are Markdown or MDX with math, syntax-highlighted code, callouts,
-captioned figures and tables — in English or Chinese.
+Personal blog of Shengguang Zhu, built with [Astro](https://astro.build) and
+deployed to GitHub Pages. Posts are Markdown or MDX with math,
+syntax-highlighted code, callouts, captioned figures and tables — in English or
+Chinese.
 
 ## Quick start
 
@@ -93,9 +94,11 @@ page at `/posts/rendering-reference` to see what each construct looks like.
 
 ## Configuration
 
-`src/site.config.mjs` holds the site title, tagline, description, author, URL,
-navigation items, social links, and posts per page. `SITE.url` must match the
-deployed origin — canonical links, the sitemap and the RSS feed are built from it.
+`src/site.config.mjs` is the one file to edit for anything site-wide: title,
+tagline, description, author, role, email, URL, navigation items, social links,
+posts per page, and the `FOCUS` list that drives the "What I do" section on the
+home page and the About page. `SITE.url` must match the deployed origin —
+canonical links, the sitemap and the RSS feed are built from it.
 
 Colours, spacing and type scale live at the top of `src/styles/global.css` as
 custom properties, with the dark theme as a single `[data-theme='dark']` block.
@@ -134,10 +137,16 @@ src/
 ## Notes
 
 - The Markdown pipeline is configured in `astro.config.mjs` via Astro's native
-  Sätteri processor. The four plugins in `src/markdown/` handle math, callouts,
-  figures, heading anchors, table wrappers and external-link attributes.
+  Sätteri processor. The plugins in `src/markdown/` handle math, callouts,
+  figures, CJK line breaks, heading anchors, table wrappers and external-link
+  attributes.
 - Code blocks use Shiki with two themes compiled in, so they recolour with the
-  light/dark toggle without shipping a highlighter to the browser.
+  light/dark toggle without shipping a highlighter to the browser. The
+  high-contrast GitHub themes are used because several tokens in the plain ones
+  fall below WCAG AA on this site's code background.
+- A source line break between two Chinese characters is joined rather than turned
+  into a space, so Chinese paragraphs can be hard-wrapped in the editor without
+  gaps appearing mid-sentence. Mixed-language breaks keep their space.
 - Inter and Newsreader are self-hosted: Astro downloads the Latin subsets at
   build time. Chinese text falls through to the system font, which is both
   faster and better-looking than a webfont CJK subset.

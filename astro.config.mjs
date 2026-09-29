@@ -7,6 +7,7 @@ import { satteri } from '@astrojs/markdown-satteri';
 import { katexPlugin } from './src/markdown/katex.mjs';
 import { calloutPlugin } from './src/markdown/callout.mjs';
 import { figurePlugin } from './src/markdown/figure.mjs';
+import { cjkLineBreakPlugin } from './src/markdown/cjk.mjs';
 import { externalLinksPlugin } from './src/markdown/external-links.mjs';
 import { headingAnchorsPlugin, tableWrapperPlugin } from './src/markdown/html-polish.mjs';
 import { SITE } from './src/site.config.mjs';
@@ -27,7 +28,7 @@ const processor = satteri({
     subscript: true,
     smartPunctuation: { quotes: false, dashes: true, ellipses: true },
   },
-  mdastPlugins: [calloutPlugin, katexPlugin, figurePlugin],
+  mdastPlugins: [cjkLineBreakPlugin, calloutPlugin, katexPlugin, figurePlugin],
   hastPlugins: [headingAnchorsPlugin, tableWrapperPlugin, externalLinksPlugin],
 });
 
@@ -59,8 +60,15 @@ export default defineConfig({
     processor,
     syntaxHighlight: { type: 'shiki' },
     shikiConfig: {
-      // Two themes, switched by the `data-theme` attribute on <html>.
-      themes: { light: 'github-light', dark: 'github-dark-dimmed' },
+      /*
+       * Two themes, switched by the `data-theme` attribute on <html>.
+       *
+       * The high-contrast GitHub variants are used rather than the plain ones:
+       * several tokens in `github-light` (notably the orange and green scopes)
+       * fall below 4.5:1 against this site's code background, which fails WCAG AA
+       * for body-size text.
+       */
+      themes: { light: 'github-light-high-contrast', dark: 'github-dark-high-contrast' },
       defaultColor: false,
       wrap: false,
     },

@@ -4,7 +4,7 @@
  * an Astro page rather than a content entry, since it is a one-off.
  */
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { SITE, SOCIAL } from '../site.config.mjs';
+import { SITE, SOCIAL, FOCUS } from '../site.config.mjs';
 import '../styles/prose.css';
 ---
 
@@ -13,14 +13,34 @@ import '../styles/prose.css';
   description={`About ${SITE.author} — what I work on, what shows up on this site, and how to get in touch.`}
 >
   <header class="page-head">
+    <p class="eyebrow">{SITE.role}</p>
     <h1 class="page-head__title">About</h1>
   </header>
 
   <div class="prose about">
     <p>
-      I'm {SITE.author}. I build and profile inference systems — the schedulers, KV caches, and
-      data paths that decide whether a model serves ten requests a second or a thousand.
+      I'm {SITE.author} — an ML systems engineer working on AI infrastructure, with a primary focus
+      on reinforcement learning frameworks and <a href="https://github.com/sgl-project/sglang">SGLang</a>.
+      My goal is to make distributed training and inference as fast and scalable as possible,
+      diving into the intersection of machine learning and systems.
     </p>
+
+    <h2>What I work on</h2>
+    <ul>
+      {
+        FOCUS.map((item) => (
+          <li>
+            <strong>{item.title}:</strong> {item.body}
+            {item.href && (
+              <>
+                {' '}
+                <a href={item.href}>{item.linkLabel ?? 'Learn more'}</a>
+              </>
+            )}
+          </li>
+        ))
+      }
+    </ul>
 
     <h2>What lands here</h2>
     <p>
@@ -40,9 +60,14 @@ import '../styles/prose.css';
 
     <h2>Get in touch</h2>
     <p>
-      The fastest route is a GitHub issue or discussion on the relevant repository. Corrections
-      are welcome and get credited.
+      Email is <a href={`mailto:${SITE.email}`}>{SITE.email}</a>. For anything code-related, a
+      GitHub issue or discussion on the relevant repository is faster. Corrections are welcome and
+      get credited.
     </p>
+
+    <hr />
+
+    <p><em>Infinite progress.</em></p>
   </div>
 </BaseLayout>
 
@@ -54,6 +79,7 @@ import '../styles/prose.css';
   }
 
   .page-head__title {
+    margin-top: var(--space-2xs);
     font-family: var(--font-serif);
     font-size: var(--step-3);
     font-weight: 600;
