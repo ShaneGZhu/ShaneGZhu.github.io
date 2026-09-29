@@ -32,12 +32,17 @@ import '../styles/prose.css';
         FOCUS.map((item) => (
           <li>
             <strong>{item.title}:</strong> {item.body}
-            {item.href && (
+            {item.links?.length ? (
               <>
                 {' '}
-                <a href={item.href}>{item.linkLabel ?? 'Learn more'}</a>
+                {item.links.map((link, index) => (
+                  <>
+                    {index > 0 && <span aria-hidden="true"> · </span>}
+                    <a href={link.href}>{link.label}</a>
+                  </>
+                ))}
               </>
-            )}
+            ) : null}
           </li>
         ))
       }

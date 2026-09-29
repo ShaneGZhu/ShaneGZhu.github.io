@@ -62,8 +62,12 @@ export const FOCUS = [
     body: 'Building and optimizing reinforcement learning training and inference pipelines.',
   },
   {
-    title: 'SGLang & LLM Inference',
-    body: 'Deeply engaged with SGLang to push the boundaries of LLM serving.',
+    title: 'LLM Inference',
+    body: 'Contributing to SGLang and FastDeploy, across the serving runtime and the kernels underneath it.',
+    links: [
+      { label: 'SGLang', href: 'https://github.com/sgl-project/sglang' },
+      { label: 'FastDeploy', href: 'https://github.com/PaddlePaddle/FastDeploy' },
+    ],
   },
   {
     title: 'Kernel Optimization',
@@ -72,7 +76,6 @@ export const FOCUS = [
   {
     title: 'Writing',
     body: 'Maintaining MLsys-Note, an open space for notes and code on AI infrastructure.',
-    href: 'https://github.com/ShaneGZhu/MLsys-Note',
-    linkLabel: 'MLsys-Note',
+    links: [{ label: 'MLsys-Note', href: 'https://github.com/ShaneGZhu/MLsys-Note' }],
   },
 ];
