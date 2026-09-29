@@ -19,9 +19,9 @@ const minutes = readingTime(post.body);
 
 <article class:list={['post-card', featured && 'post-card--featured']}>
   <div class="post-card__meta">
-    <time datetime={isoDate(pubDate)}>{formatDate(pubDate, lang)}</time>
+    <time datetime={isoDate(pubDate)}>{formatDate(pubDate)}</time>
     <span aria-hidden="true">·</span>
-    <span>{readingTimeLabel(minutes, lang)}</span>
+    <span>{readingTimeLabel(minutes)}</span>
     {draft && <span class="post-card__draft">Draft</span>}
   </div>
 

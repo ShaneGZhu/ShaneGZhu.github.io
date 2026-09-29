@@ -2,14 +2,24 @@
  * Date and reading-time helpers shared by the listing and post pages.
  */
 
-const FORMATTERS = {
-  en: new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),
-  zh: new Intl.DateTimeFormat('zh-CN', { year: 'numeric', month: 'long', day: 'numeric' }),
-};
+/*
+ * Dates are always formatted in English, even for Chinese posts, so the site has
+ * one consistent date style rather than switching between `2025年2月24日` and
+ * `February 24, 2025`. A post's `lang` field still drives its `lang` attribute,
+ * CJK typography, and how its headings are slugged.
+ *
+ * The formatter is built once and reused: `Intl.DateTimeFormat` construction is
+ * comparatively expensive and this runs for every post on every listing.
+ */
+const DATE_FORMAT = new Intl.DateTimeFormat('en-US', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+});
 
-/** Human-readable date in the post's own language. */
-export function formatDate(date: Date, lang: 'en' | 'zh' = 'en'): string {
-  return (FORMATTERS[lang] ?? FORMATTERS.en).format(date);
+/** Human-readable publication date, always English. */
+export function formatDate(date: Date): string {
+  return DATE_FORMAT.format(date);
 }
 
 /** `2024-03-08`, for `<time datetime>` and sorting-sensitive display. */
@@ -43,7 +53,10 @@ export function readingTime(body: string | undefined): number {
   return Math.max(1, Math.round(minutes));
 }
 
-/** `5 min read` / `5 分钟阅读`, matching the post's language. */
-export function readingTimeLabel(minutes: number, lang: 'en' | 'zh' = 'en'): string {
-  return lang === 'zh' ? `${minutes} 分钟阅读` : `${minutes} min read`;
+/**
+ * `5 min read`. Always English, for the same reason as `formatDate` — the post
+ * metadata line stays consistent instead of mixing scripts within one line.
+ */
+export function readingTimeLabel(minutes: number): string {
+  return `${minutes} min read`;
 }

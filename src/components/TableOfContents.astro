@@ -9,19 +9,18 @@ import type { MarkdownHeading } from 'astro';
 
 interface Props {
   headings: MarkdownHeading[];
-  lang?: 'en' | 'zh';
 }
 
-const { headings, lang = 'en' } = Astro.props;
+const { headings } = Astro.props;
 const items = headings.filter((heading) => heading.depth === 2 || heading.depth === 3);
-const label = lang === 'zh' ? '目录' : 'Contents';
 ---
 
 {
   items.length > 1 && (
     <nav class="toc" aria-labelledby="toc-heading">
+      {/* English on every post, matching the rest of the post chrome. */}
       <p class="eyebrow" id="toc-heading">
-        {label}
+        Contents
       </p>
       <ol class="toc__list">
         {items.map((heading) => (

@@ -24,9 +24,12 @@ const { post, headings, newer, older } = Astro.props;
 const { title, description, pubDate, updatedDate, tags, lang, cover, coverAlt, draft } = post.data;
 
 const minutes = readingTime(post.body);
-const updatedLabel = lang === 'zh' ? '更新于' : 'Updated';
-const olderLabel = lang === 'zh' ? '较早的文章' : 'Older post';
-const newerLabel = lang === 'zh' ? '较新的文章' : 'Newer post';
+
+/*
+ * Labels below are English regardless of the post's language: the date format is
+ * English, and mixing scripts inside one metadata line looks accidental. `lang`
+ * still drives the `lang` attribute and the body typography.
+ */
 ---
 
 <BaseLayout
@@ -42,15 +45,15 @@ const newerLabel = lang === 'zh' ? '较新的文章' : 'Newer post';
   <article class="post">
     <header class="post__header">
       <div class="post__meta">
-        <time datetime={isoDate(pubDate)}>{formatDate(pubDate, lang)}</time>
+        <time datetime={isoDate(pubDate)}>{formatDate(pubDate)}</time>
         <span aria-hidden="true">·</span>
-        <span>{readingTimeLabel(minutes, lang)}</span>
+        <span>{readingTimeLabel(minutes)}</span>
         {
           updatedDate && (
             <>
               <span aria-hidden="true">·</span>
               <span>
-                {updatedLabel} <time datetime={isoDate(updatedDate)}>{formatDate(updatedDate, lang)}</time>
+                Updated <time datetime={isoDate(updatedDate)}>{formatDate(updatedDate)}</time>
               </span>
             </>
           )
@@ -90,7 +93,7 @@ const newerLabel = lang === 'zh' ? '较新的文章' : 'Newer post';
       </div>
 
       <aside class="post__rail">
-        <TableOfContents headings={headings} lang={lang} />
+        <TableOfContents headings={headings} />
       </aside>
     </div>
 
@@ -99,7 +102,7 @@ const newerLabel = lang === 'zh' ? '较新的文章' : 'Newer post';
         <nav class="post__nav" aria-label="More posts">
           {older ? (
             <a class="post__nav-link" href={`/posts/${older.id}`} rel="prev">
-              <span class="eyebrow">{olderLabel}</span>
+              <span class="eyebrow">Older post</span>
               <span class="post__nav-title">{older.data.title}</span>
             </a>
           ) : (
@@ -107,7 +110,7 @@ const newerLabel = lang === 'zh' ? '较新的文章' : 'Newer post';
           )}
           {newer && (
             <a class="post__nav-link post__nav-link--next" href={`/posts/${newer.id}`} rel="next">
-              <span class="eyebrow">{newerLabel}</span>
+              <span class="eyebrow">Newer post</span>
               <span class="post__nav-title">{newer.data.title}</span>
             </a>
           )}
