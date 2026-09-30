@@ -4,7 +4,7 @@ description: >-
   把 KV Cache 的显存占用算清楚，再看 PagedAttention 的分块管理省下的是哪一部分。
   含一份可以直接抄去改的估算脚本，以及几个在生产里反复踩到的坑。
 pubDate: 2025-02-24
-tags: ['Inference', 'KV Cache', '显存']
+tags: ['Inference', 'KV Cache']
 lang: 'zh'
 featured: true
 ---
