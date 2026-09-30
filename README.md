@@ -161,7 +161,10 @@ src/
   The social links on the home page, the About page and the footer are all driven
   by `SOCIAL` in `src/site.config.mjs`, whose `icon` field names a glyph in that
   component; adding a link means adding both, plus a brand token if it needs one.
-- `src/assets/avatar.jpg` is the home page portrait and the source for the
+- `src/assets/banner.jpg` is the home page banner, a wide 16:9 illustration above
+  the intro. It keeps its source ratio at every width; a taller box on phones
+  would crop the sides, where the illustration's subject sits.
+- `src/assets/avatar.jpg` is the About page portrait and the source for the
   favicons. It is stored at 224px for a 112px box so 2x displays get a sharp
   image. After replacing it, run `npm run favicons` to regenerate
   `public/favicon.ico`, `public/icon-256.png` and `public/apple-touch-icon.png`;

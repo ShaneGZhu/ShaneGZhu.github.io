@@ -3,8 +3,11 @@
  * About page. Edit the prose below directly — it is intentionally plain HTML in
  * an Astro page rather than a content entry, since it is a one-off.
  */
+import { Image } from 'astro:assets';
+
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Icon from '../components/Icon.astro';
+import avatar from '../assets/avatar.jpg';
 import { SITE, SOCIAL, FOCUS } from '../site.config.mjs';
 import '../styles/prose.css';
 ---
@@ -14,8 +17,21 @@ import '../styles/prose.css';
   description={`About ${SITE.author} — what I work on, what shows up on this site, and how to get in touch.`}
 >
   <header class="page-head">
-    <p class="eyebrow">{SITE.role}</p>
-    <h1 class="page-head__title">About</h1>
+    {/*
+      The source is 224px for a 112px box, so a 2x display gets a sharp avatar.
+      `layout="fixed"` stops Astro emitting a viewport-based srcset for what is a
+      fixed-size image; the size itself comes from CSS below.
+    */}
+    <Image
+      class="page-head__avatar"
+      src={avatar}
+      alt={`Portrait of ${SITE.author}`}
+      layout="fixed"
+    />
+    <div>
+      <p class="eyebrow">{SITE.role}</p>
+      <h1 class="page-head__title">About</h1>
+    </div>
   </header>
 
   <div class="prose about">
@@ -77,9 +93,21 @@ import '../styles/prose.css';
 
 <style>
   .page-head {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
     max-width: var(--measure);
     padding-bottom: var(--space-md);
     border-bottom: 1px solid var(--border);
+  }
+
+  .page-head__avatar {
+    width: 5rem;
+    height: 5rem;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background-color: var(--bg-subtle);
+    flex: none;
   }
 
   .page-head__title {

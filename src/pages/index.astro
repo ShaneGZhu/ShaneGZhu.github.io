@@ -1,6 +1,6 @@
 ---
 /**
- * Home page: avatar, short intro, what I work on, then the latest few posts with
+ * Home page: banner, short intro, what I work on, then the latest few posts with
  * a link through to the full index.
  */
 import { Image } from 'astro:assets';
@@ -8,7 +8,7 @@ import { Image } from 'astro:assets';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import PostCard from '../components/PostCard.astro';
 import Icon from '../components/Icon.astro';
-import avatar from '../assets/avatar.jpg';
+import banner from '../assets/banner.jpg';
 import { getPublishedPosts, sortFeaturedFirst } from '../utils/posts';
 import { SITE, FOCUS, SOCIAL } from '../site.config.mjs';
 
@@ -18,44 +18,45 @@ const hasMore = posts.length > recent.length;
 ---
 
 <BaseLayout>
-  <section class="intro">
-    {/*
-      The source is 224px for a 112px box, so a 2x display gets a sharp avatar.
-      `layout="fixed"` keeps Astro from emitting a viewport-based srcset for what
-      is a fixed-size image; the size itself comes from CSS below.
-    */}
+  {/*
+    A wide banner rather than a portrait, so it spans the full content width.
+    `loading="eager"` and `fetchpriority="high"` because it is the largest
+    above-the-fold element; the widths cover a phone up to a wide desktop at 2x.
+  */}
+  <figure class="banner">
     <Image
-      class="intro__avatar"
-      src={avatar}
-      alt={`Portrait of ${SITE.author}`}
-      layout="fixed"
+      src={banner}
+      alt="Illustration: a girl in a black dress saluting beside a pink dragon plush"
+      widths={[480, 720, 1040, 1536]}
+      sizes="(max-width: 68rem) 100vw, 68rem"
       loading="eager"
+      fetchpriority="high"
     />
+  </figure>
 
-    <div class="intro__text">
-      <p class="eyebrow">{SITE.role}</p>
-      <h1 class="intro__title">Hi there, I'm {SITE.author} 👋</h1>
-      <p class="intro__body">
-        I'm a developer deeply passionate about <strong>AI infrastructure</strong>, with a primary
-        focus on <strong>reinforcement learning frameworks</strong> and{' '}
-        <strong>LLM inference</strong> — contributing to <strong>SGLang</strong> and{' '}
-        <strong>FastDeploy</strong>. My goal is to make distributed training and inference as fast
-        and scalable as possible, diving into the intersection of machine learning and systems.
-      </p>
+  <section class="intro">
+    <p class="eyebrow">{SITE.role}</p>
+    <h1 class="intro__title">Hi there, I'm {SITE.author} 👋</h1>
+    <p class="intro__body">
+      I'm a developer deeply passionate about <strong>AI infrastructure</strong>, with a primary
+      focus on <strong>reinforcement learning frameworks</strong> and{' '}
+      <strong>LLM inference</strong> — contributing to <strong>SGLang</strong> and{' '}
+      <strong>FastDeploy</strong>. My goal is to make distributed training and inference as fast
+      and scalable as possible, diving into the intersection of machine learning and systems.
+    </p>
 
-      <ul class="intro__links">
-        {
-          SOCIAL.map((item) => (
-            <li>
-              <a class="intro__link" href={item.href}>
-                <Icon name={item.icon} />
-                <span>{item.label}</span>
-              </a>
-            </li>
-          ))
-        }
-      </ul>
-    </div>
+    <ul class="intro__links">
+      {
+        SOCIAL.map((item) => (
+          <li>
+            <a class="intro__link" href={item.href}>
+              <Icon name={item.icon} />
+              <span>{item.label}</span>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
   </section>
 
   <section class="focus" aria-labelledby="focus-heading">
@@ -123,26 +124,30 @@ const hasMore = posts.length > recent.length;
 </BaseLayout>
 
 <style>
-  .intro {
-    display: grid;
-    grid-template-columns: auto minmax(0, 1fr);
-    gap: var(--space-lg);
-    align-items: start;
+  /*
+   * The banner spans the full content width. A fixed aspect ratio reserves the
+   * space before the image loads, so the text below does not jump.
+   */
+  .banner {
+    margin: 0;
     max-width: var(--measure-wide);
-    padding-bottom: var(--space-xl);
-    border-bottom: 1px solid var(--border);
   }
 
-  .intro__avatar {
-    width: 7rem;
-    height: 7rem;
-    border-radius: 999px;
+  .banner img {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    border-radius: var(--radius-lg);
     border: 1px solid var(--border);
     background-color: var(--bg-subtle);
   }
 
-  .intro__text {
+  .intro {
     max-width: var(--measure);
+    margin-top: var(--space-xl);
+    padding-bottom: var(--space-xl);
+    border-bottom: 1px solid var(--border);
   }
 
   .intro__title {
@@ -305,14 +310,17 @@ const hasMore = posts.length > recent.length;
   }
 
   @media (max-width: 34rem) {
-    .intro {
-      grid-template-columns: minmax(0, 1fr);
-      gap: var(--space-md);
+    /*
+     * The banner keeps its source 16:9 ratio at every width. Forcing a taller box
+     * on a phone would crop roughly 29% of the width, and the illustration is
+     * laid out so the interesting part is off-centre.
+     */
+    .banner img {
+      border-radius: var(--radius-md);
     }
 
-    .intro__avatar {
-      width: 5.5rem;
-      height: 5.5rem;
+    .intro {
+      margin-top: var(--space-lg);
     }
   }
 </style>
