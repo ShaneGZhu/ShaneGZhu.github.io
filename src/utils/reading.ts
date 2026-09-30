@@ -27,19 +27,3 @@ export function sourceHost(url: string): string {
     return url;
   }
 }
-
-/** Every tag used by the reading list, most-used first then alphabetical. */
-export function collectReadingTags(entries: ReadingEntry[]): string[] {
-  const counts = new Map<string, number>();
-
-  for (const entry of entries) {
-    for (const tag of entry.data.tags) {
-      const label = tag.trim();
-      if (label) counts.set(label, (counts.get(label) ?? 0) + 1);
-    }
-  }
-
-  return [...counts.entries()]
-    .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
-    .map(([label]) => label);
-}

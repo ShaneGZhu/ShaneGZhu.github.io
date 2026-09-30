@@ -4,13 +4,17 @@
  *
  * Entries live in `src/content/reading/` as small YAML files. Nothing here is
  * republished — each item links to the original, and the note is mine.
+ *
+ * Visually this is a stack of bordered cards rather than the plain ruled rows the
+ * article listings use, so the two pages are distinguishable at a glance. The
+ * titles are set smaller and in sans rather than the serif the posts use, because
+ * these are citations to scan, not pieces to read here.
  */
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import { getReadingList, collectReadingTags, sourceHost } from '../../utils/reading';
+import { getReadingList, sourceHost } from '../../utils/reading';
 import { formatDate, isoDate } from '../../utils/format';
 
 const entries = await getReadingList();
-const tags = collectReadingTags(entries);
 ---
 
 <BaseLayout
@@ -26,36 +30,43 @@ const tags = collectReadingTags(entries);
   </header>
 
   {
-    tags.length > 0 && (
-      <ul class="tag-list reading__tags">
-        {tags.map((tag) => (
-          <li>
-            <span class="tag-pill">{tag}</span>
-          </li>
-        ))}
-      </ul>
-    )
-  }
-
-  {
     entries.length > 0 ? (
-      <ul class="reading">
+      <ul class="cards">
         {entries.map((entry) => (
-          <li class="reading__item">
-            {/* The title links out, so the whole entry reads as a citation. */}
-            <h2 class="reading__title">
+          <li class="card">
+            {/*
+              The heading holds the link, so the entry reads as a citation and the
+              whole title is the click target. `rel="noopener"` because the
+              destination is not ours; no `target="_blank"`, so the back button
+              still works.
+            */}
+            <h2 class="card__title">
               <a href={entry.data.url} rel="noopener">
                 {entry.data.title}
+                {/* Marks the link as leaving the site. */}
+                <span class="card__out" aria-hidden="true">
+                  ↗
+                </span>
               </a>
             </h2>
 
-            <p class="reading__meta">
-              {entry.data.author && <span>{entry.data.author}</span>}
-              {entry.data.author && <span aria-hidden="true">·</span>}
-              <span>{sourceHost(entry.data.url)}</span>
+            <p class="card__note">{entry.data.note}</p>
+
+            <p class="card__meta">
+              {entry.data.author && (
+                <>
+                  <span>{entry.data.author}</span>
+                  <span class="card__sep" aria-hidden="true">
+                    ·
+                  </span>
+                </>
+              )}
+              <span class="card__host">{sourceHost(entry.data.url)}</span>
               {entry.data.sourcePublished && (
                 <>
-                  <span aria-hidden="true">·</span>
+                  <span class="card__sep" aria-hidden="true">
+                    ·
+                  </span>
                   <time datetime={isoDate(entry.data.sourcePublished)}>
                     {formatDate(entry.data.sourcePublished)}
                   </time>
@@ -63,22 +74,22 @@ const tags = collectReadingTags(entries);
               )}
             </p>
 
-            <p class="reading__note">{entry.data.note}</p>
-
-            {entry.data.tags.length > 0 && (
-              <ul class="tag-list reading__item-tags">
-                {entry.data.tags.map((tag) => (
-                  <li>
-                    <span class="tag-pill">{tag}</span>
-                  </li>
-                ))}
-              </ul>
-            )}
+            {
+              entry.data.tags.length > 0 && (
+                <ul class="tag-list card__tags">
+                  {entry.data.tags.map((tag) => (
+                    <li>
+                      <span class="tag-pill">{tag}</span>
+                    </li>
+                  ))}
+                </ul>
+              )
+            }
           </li>
         ))}
       </ul>
     ) : (
-      <p class="reading__empty">
+      <p class="cards__empty">
         Nothing collected yet. Add a YAML file under <code>src/content/reading/</code> — the schema is
         in <code>src/content.config.ts</code>.
       </p>
@@ -106,63 +117,94 @@ const tags = collectReadingTags(entries);
     font-size: var(--step--1);
   }
 
-  .reading__tags {
-    margin-top: var(--space-md);
-  }
-
-  .reading {
-    margin: var(--space-sm) 0 0;
+  /*
+   * One column of bordered cards, not a grid: the notes vary in height, so a
+   * multi-column grid would leave holes and make the eye jump sideways. A single
+   * column stays scannable however long each note is.
+   */
+  .cards {
+    margin: var(--space-lg) 0 0;
     padding: 0;
     list-style: none;
+    display: grid;
+    gap: var(--space-sm);
     max-width: var(--measure);
   }
 
-  .reading__item {
-    padding-block: var(--space-md);
-    border-bottom: 1px solid var(--border);
+  .card {
+    padding: var(--space-md);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    background-color: var(--bg-raised);
+    transition: border-color var(--transition), box-shadow var(--transition),
+      transform var(--transition);
   }
 
-  .reading__item:last-child {
-    border-bottom: 0;
+  .card:hover {
+    border-color: var(--border-strong);
+    box-shadow: var(--shadow-md);
+    transform: translateY(-1px);
   }
 
-  .reading__title {
-    font-family: var(--font-serif);
-    font-size: var(--step-1);
-    font-weight: 600;
-    letter-spacing: -0.015em;
-    line-height: 1.3;
-    text-wrap: balance;
+  /* Smaller than a post title, and sans rather than serif. */
+  .card__title {
+    font-family: var(--font-sans);
+    font-size: var(--step-0);
+    font-weight: 620;
+    line-height: 1.4;
+    letter-spacing: -0.005em;
+    text-wrap: pretty;
   }
 
-  .reading__title a {
+  .card__title a {
     text-decoration: none;
   }
 
-  .reading__title a:hover {
+  /* Only the title tints on hover; the card's border already marks the target. */
+  .card:hover .card__title a {
     color: var(--accent);
   }
 
-  .reading__meta {
-    margin-top: var(--space-2xs);
+  .card__out {
+    margin-left: 0.35em;
+    font-size: 0.85em;
+    color: var(--text-faint);
+  }
+
+  .card:hover .card__out {
+    color: var(--accent);
+  }
+
+  .card__note {
+    margin-top: var(--space-xs);
+    font-size: calc(var(--step-0) * 0.95);
+    line-height: 1.6;
+    color: var(--text-muted);
+  }
+
+  .card__meta {
+    margin-top: var(--space-sm);
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: var(--space-xs);
+    gap: var(--space-2xs) var(--space-xs);
     font-size: var(--step--1);
     color: var(--text-faint);
   }
 
-  .reading__note {
+  .card__host {
+    font-variant-numeric: tabular-nums;
+  }
+
+  .card__sep {
+    color: var(--border-strong);
+  }
+
+  .card__tags {
     margin-top: var(--space-xs);
-    color: var(--text-muted);
   }
 
-  .reading__item-tags {
-    margin-top: var(--space-sm);
-  }
-
-  .reading__empty {
+  .cards__empty {
     margin-top: var(--space-lg);
     color: var(--text-muted);
   }
