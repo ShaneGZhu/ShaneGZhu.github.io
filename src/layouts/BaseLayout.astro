@@ -40,7 +40,14 @@ const {
   noindex = false,
 } = Astro.props;
 
-const pageTitle = title ? `${title} · ${SITE.title}` : `${SITE.title} — ${SITE.tagline}`;
+/*
+ * Page titles are `Page · Site`, using the site name as a short suffix so the
+ * browser tab stays readable. A page with no title of its own falls back to the
+ * bare site name rather than appending the tagline: the tagline is a whole
+ * sentence, and a 90-character tab title is truncated in the tab strip and saved
+ * verbatim when the page is bookmarked.
+ */
+const pageTitle = title ? `${title} · ${SITE.title}` : SITE.title;
 const canonical = new URL(Astro.url.pathname, Astro.site ?? SITE.url);
 const ogImage = image ? new URL(image, Astro.site ?? SITE.url) : undefined;
 ---
