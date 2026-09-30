@@ -51,7 +51,7 @@ Optional frontmatter:
 | Field | Type | Effect |
 | --- | --- | --- |
 | `updatedDate` | date | Shows an "Updated" line on the post |
-| `draft` | boolean | Visible in `npm run dev`, excluded from builds and the feed |
+| `draft` | boolean | Visible in `npm run dev`, excluded from production builds |
 | `featured` | boolean | Pinned to the top of the home page |
 | `cover` | image path | Hero image, relative to the file (e.g. `../../assets/x.jpg`) |
 | `coverAlt` | string | Alt text and caption for the cover |
