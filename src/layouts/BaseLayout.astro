@@ -43,9 +43,8 @@ const {
 /*
  * Page titles are `Page · Site`, using the site name as a short suffix so the
  * browser tab stays readable. A page with no title of its own falls back to the
- * bare site name rather than appending the tagline: the tagline is a whole
- * sentence, and a 90-character tab title is truncated in the tab strip and saved
- * verbatim when the page is bookmarked.
+ * bare site name: appending a descriptive sentence produced a 90-character tab
+ * title that browsers truncate and save verbatim when bookmarking.
  */
 const pageTitle = title ? `${title} · ${SITE.title}` : SITE.title;
 const canonical = new URL(Astro.url.pathname, Astro.site ?? SITE.url);

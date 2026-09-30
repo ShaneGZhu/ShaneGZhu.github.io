@@ -101,10 +101,10 @@ page at `/posts/rendering-reference` to see what each construct looks like.
 ## Configuration
 
 `src/site.config.mjs` is the one file to edit for anything site-wide: title,
-tagline, description, author, role, email, URL, navigation items, social links,
-posts per page, and the `FOCUS` list that drives the "What I do" section on the
-home page and the About page. `SITE.url` must match the deployed origin —
-canonical links and the sitemap are built from it.
+description, author, role, email, URL, navigation items, social links, posts per
+page, and the `FOCUS` list that drives the "What I do" section on the home page
+and the About page. `SITE.url` must match the deployed origin — canonical links
+and the sitemap are built from it.
 
 Colours, spacing and type scale live at the top of `src/styles/global.css` as
 custom properties, with the dark theme as a single `[data-theme='dark']` block.

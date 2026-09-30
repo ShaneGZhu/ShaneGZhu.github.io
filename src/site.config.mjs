@@ -8,7 +8,6 @@
 export const SITE = {
   url: 'https://shanegzhu.github.io',
   title: 'Shengguang Zhu',
-  tagline: 'Making distributed training and inference as fast and scalable as possible.',
   description:
     'ML systems engineer working on RL infrastructure and high-throughput LLM inference, contributing to SGLang and FastDeploy. Notes on schedulers, kernels, and the systems side of machine learning.',
   author: 'Shengguang Zhu',
