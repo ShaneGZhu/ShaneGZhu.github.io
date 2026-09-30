@@ -121,6 +121,7 @@ at GitHub, and update `SITE.url` in `src/site.config.mjs` to match.
 ## Layout
 
 ```
+scripts/             make-favicons.mjs — regenerates public/ icons from the avatar
 src/
 ├── assets/          images referenced from posts (optimized at build)
 ├── components/      Header, Footer, PostCard, TableOfContents, Pagination, Icon
@@ -160,7 +161,10 @@ src/
   The social links on the home page, the About page and the footer are all driven
   by `SOCIAL` in `src/site.config.mjs`, whose `icon` field names a glyph in that
   component; adding a link means adding both, plus a brand token if it needs one.
-- `src/assets/avatar.jpg` is the home page portrait. It is stored at 224px for a
-  112px box so 2x displays get a sharp image.
+- `src/assets/avatar.jpg` is the home page portrait and the source for the
+  favicons. It is stored at 224px for a 112px box so 2x displays get a sharp
+  image. After replacing it, run `npm run favicons` to regenerate
+  `public/favicon.ico`, `public/icon-256.png` and `public/apple-touch-icon.png`;
+  those outputs are committed, so an ordinary build never runs that step.
 - `SITE.postsOnHome` controls how many posts the home page lists before the
   "Browse all posts" link through to the full index.

@@ -76,7 +76,14 @@ const ogImage = image ? new URL(image, Astro.site ?? SITE.url) : undefined;
     {modifiedTime && <meta property="article:modified_time" content={modifiedTime.toISOString()} />}
 
     <link rel="sitemap" href="/sitemap-index.xml" />
-    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    {/*
+      Favicons, generated from the avatar by `scripts/make-favicons.mjs`.
+      `sizes="any"` on the .ico keeps browsers from preferring a scaled 16px PNG
+      over the multi-resolution icon.
+    */}
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="icon" type="image/png" sizes="256x256" href="/icon-256.png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
 
     {/*
       Theme is resolved before first paint to avoid a flash of the wrong colours.
