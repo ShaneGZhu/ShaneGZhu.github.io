@@ -24,11 +24,11 @@ export const SITE = {
 };
 
 export const NAV = [
-  { label: 'Home', href: '/' },
-  { label: 'Writing', href: '/posts' },
-  { label: 'Archive', href: '/archive' },
-  { label: 'Tags', href: '/tags' },
-  { label: 'About', href: '/about' },
+  { label: 'Home', href: '/blog/' },
+  { label: 'Writing', href: '/blog/posts/' },
+  { label: 'Archive', href: '/blog/archive/' },
+  { label: 'Tags', href: '/blog/tags/' },
+  { label: 'About', href: '/blog/about/' },
 ];
 
 /**

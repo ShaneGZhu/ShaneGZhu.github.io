@@ -2,8 +2,8 @@
 /**
  * Tag index: every tag with a post count.
  */
-import BaseLayout from '../../layouts/BaseLayout.astro';
-import { getPublishedPosts, collectTags } from '../../utils/posts';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import { getPublishedPosts, collectTags } from '../../../utils/posts';
 
 const posts = await getPublishedPosts();
 const tags = collectTags(posts);
@@ -23,7 +23,7 @@ const tags = collectTags(posts);
       <ul class="tag-grid">
         {tags.map((tag) => (
           <li>
-            <a class="tag-card" href={`/tags/${tag.slug}`}>
+            <a class="tag-card" href={`/blog/tags/${tag.slug}`}>
               <span class="tag-card__label">{tag.label}</span>
               <span class="tag-card__count">{tag.count}</span>
             </a>

@@ -8,8 +8,8 @@
 import type { GetStaticPaths } from 'astro';
 import { render } from 'astro:content';
 
-import PostLayout from '../../layouts/PostLayout.astro';
-import { getPublishedPosts, getNeighbours, type Post } from '../../utils/posts';
+import PostLayout from '../../../layouts/PostLayout.astro';
+import { getPublishedPosts, getNeighbours, type Post } from '../../../utils/posts';
 
 export const getStaticPaths: GetStaticPaths = async () => {
   const posts = await getPublishedPosts();

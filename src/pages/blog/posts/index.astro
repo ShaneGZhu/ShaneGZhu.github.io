@@ -3,11 +3,11 @@
  * Post index, page 1. Later pages live at `/posts/page/2`, which keeps this
  * route from colliding with `/posts/<slug>`.
  */
-import BaseLayout from '../../layouts/BaseLayout.astro';
-import PostCard from '../../components/PostCard.astro';
-import Pagination from '../../components/Pagination.astro';
-import { getPublishedPosts } from '../../utils/posts';
-import { SITE } from '../../site.config.mjs';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import PostCard from '../../../components/PostCard.astro';
+import Pagination from '../../../components/Pagination.astro';
+import { getPublishedPosts } from '../../../utils/posts';
+import { SITE } from '../../../site.config.mjs';
 
 const posts = await getPublishedPosts();
 const totalPages = Math.max(1, Math.ceil(posts.length / SITE.postsPerPage));
@@ -30,7 +30,7 @@ const items = posts.slice(0, SITE.postsPerPage);
   <Pagination
     current={1}
     total={totalPages}
-    nextUrl={totalPages > 1 ? '/posts/page/2' : undefined}
+    nextUrl={totalPages > 1 ? '/blog/posts/page/2' : undefined}
   />
 </BaseLayout>
 

@@ -2,18 +2,26 @@
 import { NAV, SITE } from '../site.config.mjs';
 
 /*
- * Mark the active section. `/posts/some-slug` should still light up "Writing", so
- * a prefix match is used — except for the home link, since `/` is a prefix of
- * every path and would stay lit on every page.
+ * Mark the active section.
+ *
+ * Both sides are normalised to have no trailing slash, because the nav hrefs end
+ * in `/` while `Astro.url.pathname` may or may not, depending on how the request
+ * arrived. A section link also matches by prefix, so `/blog/posts/some-slug`
+ * lights up "Writing"; the home link matches exactly, since `/blog` is a prefix
+ * of every other path and would otherwise stay lit everywhere.
  */
-const path = Astro.url.pathname.replace(/\/+$/, '') || '/';
-const isActive = (href: string) =>
-  href === '/' ? path === '/' : path === href || path.startsWith(`${href}/`);
+const normalise = (value: string) => value.replace(/\/+$/, '') || '/';
+const path = normalise(Astro.url.pathname);
+
+const isActive = (href: string) => {
+  const target = normalise(href);
+  return target === '/blog' ? path === target : path === target || path.startsWith(`${target}/`);
+};
 ---
 
 <header class="site-header">
   <div class="site-header__inner shell">
-    <a class="brand" href="/">{SITE.title}</a>
+    <a class="brand" href="/blog/">{SITE.title}</a>
 
     <nav class="nav" aria-label="Primary">
       {

@@ -26,7 +26,7 @@ const minutes = readingTime(post.body);
   </div>
 
   <h2 class="post-card__title" lang={lang}>
-    <a href={`/posts/${post.id}`}>{title}</a>
+    <a href={`/blog/posts/${post.id}`}>{title}</a>
   </h2>
 
   <p class="post-card__excerpt" lang={lang}>{description}</p>
@@ -36,7 +36,7 @@ const minutes = readingTime(post.body);
       <ul class="tag-list post-card__tags">
         {tags.map((tag) => (
           <li>
-            <a class="tag-pill" href={`/tags/${tagSlug(tag)}`}>
+            <a class="tag-pill" href={`/blog/tags/${tagSlug(tag)}`}>
               {tag}
             </a>
           </li>

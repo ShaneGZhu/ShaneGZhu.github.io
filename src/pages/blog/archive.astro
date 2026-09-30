@@ -2,9 +2,9 @@
 /**
  * Compact chronological list of everything, grouped by year.
  */
-import BaseLayout from '../layouts/BaseLayout.astro';
-import { getPublishedPosts, groupByYear } from '../utils/posts';
-import { isoDate } from '../utils/format';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getPublishedPosts, groupByYear } from '../../utils/posts';
+import { isoDate } from '../../utils/format';
 
 const posts = await getPublishedPosts();
 const years = groupByYear(posts);
@@ -31,7 +31,7 @@ const years = groupByYear(posts);
               <time class="year__date" datetime={isoDate(post.data.pubDate)}>
                 {isoDate(post.data.pubDate).slice(5)}
               </time>
-              <a class="year__link" href={`/posts/${post.id}`} lang={post.data.lang}>
+              <a class="year__link" href={`/blog/posts/${post.id}`} lang={post.data.lang}>
                 {post.data.title}
               </a>
             </li>

@@ -16,7 +16,7 @@ here first.
 ## Text and inline marks
 
 Regular paragraph text, with **bold**, *italic*, ***bold italic***,
-~~strikethrough~~, `inline code`, a [link to another post](/posts/kv-cache-memory-budget),
+~~strikethrough~~, `inline code`, a [link to another post](/blog/posts/kv-cache-memory-budget/),
 an [external link](https://astro.build) that opens in a new tab, H~2~O with a
 subscript, x^2^ with a superscript, and a <kbd>⌘</kbd> + <kbd>K</kbd> key hint.
 

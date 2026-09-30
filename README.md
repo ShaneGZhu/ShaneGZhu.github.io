@@ -1,7 +1,13 @@
 # ShaneGZhu.github.io
 
 Personal blog of Shengguang Zhu, built with [Astro](https://astro.build) and
-deployed to GitHub Pages. Posts are Markdown or MDX with math,
+deployed to GitHub Pages.
+
+Every page is served under `/blog/`; the domain root redirects there. Routes come
+from the file layout — `src/pages/blog/about.astro` → `/blog/about/` — so adding
+a page means adding a file under `src/pages/blog/`. Internal links carry the
+prefix explicitly, because Astro's `base` option would prefix generated asset
+URLs but not hand-written page links, leaving the two inconsistent. Posts are Markdown or MDX with math,
 syntax-highlighted code, callouts, captioned figures and tables — in English or
 Chinese.
 
@@ -24,7 +30,7 @@ Node 22.12 or newer is required (Astro 7's engine constraint).
 ## Writing a post
 
 Create a file under `src/content/posts/`. The filename becomes the URL:
-`src/content/posts/my-post.md` → `/posts/my-post`.
+`src/content/posts/my-post.md` → `/blog/posts/my-post/`.
 
 ```markdown
 ---
@@ -128,7 +134,8 @@ src/
 ├── content/posts/   the posts themselves
 ├── layouts/         BaseLayout (document shell), PostLayout (articles)
 ├── markdown/        Markdown pipeline plugins (math, callouts, figures, …)
-├── pages/           routes, including 404.astro
+├── pages/           index.astro (root redirect) + 404.astro
+│   └── blog/        every real page, served under /blog/
 ├── styles/          global.css (tokens, chrome), prose.css (article body)
 ├── utils/           post queries, tag grouping, date and reading-time helpers
 ├── content.config.ts   frontmatter schema

@@ -68,7 +68,7 @@ const minutes = readingTime(post.body);
           <ul class="tag-list post__tags">
             {tags.map((tag) => (
               <li>
-                <a class="tag-pill" href={`/tags/${tagSlug(tag)}`}>
+                <a class="tag-pill" href={`/blog/tags/${tagSlug(tag)}`}>
                   {tag}
                 </a>
               </li>
@@ -101,7 +101,7 @@ const minutes = readingTime(post.body);
       (newer || older) && (
         <nav class="post__nav" aria-label="More posts">
           {older ? (
-            <a class="post__nav-link" href={`/posts/${older.id}`} rel="prev">
+            <a class="post__nav-link" href={`/blog/posts/${older.id}`} rel="prev">
               <span class="eyebrow">Older post</span>
               <span class="post__nav-title">{older.data.title}</span>
             </a>
@@ -109,7 +109,7 @@ const minutes = readingTime(post.body);
             <span />
           )}
           {newer && (
-            <a class="post__nav-link post__nav-link--next" href={`/posts/${newer.id}`} rel="next">
+            <a class="post__nav-link post__nav-link--next" href={`/blog/posts/${newer.id}`} rel="next">
               <span class="eyebrow">Newer post</span>
               <span class="post__nav-title">{newer.data.title}</span>
             </a>

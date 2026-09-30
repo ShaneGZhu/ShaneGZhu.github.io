@@ -35,7 +35,17 @@ const processor = satteri({
 export default defineConfig({
   site: SITE.url,
   trailingSlash: 'ignore',
-  integrations: [mdx(), sitemap()],
+  integrations: [
+    mdx(),
+    sitemap({
+      /*
+       * The domain root is only a redirect to `/blog/` and carries `noindex`.
+       * Listing it would ask search engines to index a page that tells them not
+       * to, and would put two URLs for the same content in front of them.
+       */
+      filter: (page) => page !== `${SITE.url}/`,
+    }),
+  ],
   fonts: [
     {
       provider: fontProviders.google(),
