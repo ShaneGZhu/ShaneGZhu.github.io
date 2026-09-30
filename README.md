@@ -98,6 +98,31 @@ Also available: GFM tables, task lists, footnotes (`[^1]`), `^superscript^`,
 `src/content/posts/rendering-reference.md` exercises all of it; read the rendered
 page at `/posts/rendering-reference` to see what each construct looks like.
 
+## Collecting other people's writing
+
+The `/blog/reading` page lists articles by other people. It is deliberately a
+separate collection from `posts`, so the article listings stay a record of what I
+wrote, and so the metadata can describe the source rather than pretending to be a
+publication date of mine.
+
+One small YAML file per item under `src/content/reading/`:
+
+```yaml
+title: 'The original title, as the author wrote it'
+url: 'https://example.com/the-article'
+author: 'Their name'          # optional
+sourcePublished: 2023-06-20   # optional, when they published it
+added: 2025-03-01             # required, when I collected it — the sort order
+note: >-
+  One or two sentences in my own words on why it is worth reading.
+tags: ['Inference']           # optional
+```
+
+Entries are links with commentary, not republished text: each one points at the
+original and the note is mine. The page sorts by `added`, newest first. An entry
+does not get a page of its own — if a note grows into a full piece, it belongs in
+`posts` instead.
+
 ## Configuration
 
 `src/site.config.mjs` is the one file to edit for anything site-wide: title,
@@ -132,6 +157,7 @@ src/
 ├── assets/          images referenced from posts (optimized at build)
 ├── components/      Header, Footer, PostCard, TableOfContents, Pagination, Icon
 ├── content/posts/   the posts themselves
+├── content/reading/ other people's writing, as small YAML entries
 ├── layouts/         BaseLayout (document shell), PostLayout (articles)
 ├── markdown/        Markdown pipeline plugins (math, callouts, figures, …)
 ├── pages/           index.astro (root redirect) + 404.astro

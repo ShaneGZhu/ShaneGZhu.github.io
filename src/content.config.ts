@@ -23,4 +23,32 @@ const posts = defineCollection({
     }),
 });
 
-export const collections = { posts };
+/**
+ * Other people's writing, collected rather than written.
+ *
+ * Kept separate from `posts` so the article listings stay a record of what I
+ * wrote, and so the metadata can describe the *source* (`url`, `author`,
+ * `sourcePublished`) instead of pretending to be my own publication date.
+ *
+ * These are links with commentary, not republished text: the entry points at the
+ * original and the note is my own sentence about why it is worth reading.
+ */
+const reading = defineCollection({
+  loader: glob({ pattern: '**/*.{yml,yaml}', base: './src/content/reading' }),
+  schema: z.object({
+    /** The original title, as the author wrote it. */
+    title: z.string(),
+    /** Canonical URL of the original. */
+    url: z.url(),
+    author: z.string().optional(),
+    /** When the original was published, if it is known. */
+    sourcePublished: z.coerce.date().optional(),
+    /** When I collected it — the sort order for the page. */
+    added: z.coerce.date(),
+    /** One or two sentences in my own words. */
+    note: z.string(),
+    tags: z.array(z.string()).default([]),
+  }),
+});
+
+export const collections = { posts, reading };

@@ -345,13 +345,14 @@ video {
   align-items: center;
   justify-content: flex-end;
   gap: clamp(var(--space-sm), 2vw, var(--space-md));
-  /* Many nav items on a narrow screen scroll instead of overflowing. */
-  overflow-x: auto;
-  scrollbar-width: none;
-}
-
-.nav::-webkit-scrollbar {
-  display: none;
+  /*
+   * The nav can get wide enough to exceed its column on a narrow phone. Wrapping
+   * onto another line keeps every link visible; the previous behaviour was a
+   * hidden scrollbar, which clipped the last links with nothing to indicate there
+   * was more to see.
+   */
+  flex-wrap: wrap;
+  row-gap: var(--space-2xs);
 }
 
 .nav__link {

@@ -1,0 +1,14 @@
+# Example entry — delete it once you have your own. The schema is in
+# src/content.config.ts; every field below except `author`, `sourcePublished`
+# and `tags` is required.
+title: 'vLLM: Easy, Fast, and Cheap LLM Serving with PagedAttention'
+url: 'https://blog.vllm.ai/2023/06/20/vllm.html'
+author: 'Woosuk Kwon and the vLLM team'
+sourcePublished: 2023-06-20
+added: 2025-03-01
+note: >-
+  The post that introduced paged KV cache to most people. Read it for the memory
+  accounting in the middle section — it explains why continuous batching alone
+  does not get you far once sequences get long, which is the part most
+  reimplementations skip.
+tags: ['Inference', 'KV Cache']

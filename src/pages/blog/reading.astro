@@ -1,0 +1,169 @@
+---
+/**
+ * Reading list: other people's writing, collected with a short note.
+ *
+ * Entries live in `src/content/reading/` as small YAML files. Nothing here is
+ * republished — each item links to the original, and the note is mine.
+ */
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getReadingList, collectReadingTags, sourceHost } from '../../utils/reading';
+import { formatDate, isoDate } from '../../utils/format';
+
+const entries = await getReadingList();
+const tags = collectReadingTags(entries);
+---
+
+<BaseLayout
+  title="Reading"
+  description="Articles and posts by other people that I keep coming back to, with a note on why each one is worth your time."
+>
+  <header class="page-head">
+    <h1 class="page-head__title">Reading</h1>
+    <p class="page-head__sub">
+      {entries.length} {entries.length === 1 ? 'item' : 'items'} collected. Other people's writing —
+      each one links to the original.
+    </p>
+  </header>
+
+  {
+    tags.length > 0 && (
+      <ul class="tag-list reading__tags">
+        {tags.map((tag) => (
+          <li>
+            <span class="tag-pill">{tag}</span>
+          </li>
+        ))}
+      </ul>
+    )
+  }
+
+  {
+    entries.length > 0 ? (
+      <ul class="reading">
+        {entries.map((entry) => (
+          <li class="reading__item">
+            {/* The title links out, so the whole entry reads as a citation. */}
+            <h2 class="reading__title">
+              <a href={entry.data.url} rel="noopener">
+                {entry.data.title}
+              </a>
+            </h2>
+
+            <p class="reading__meta">
+              {entry.data.author && <span>{entry.data.author}</span>}
+              {entry.data.author && <span aria-hidden="true">·</span>}
+              <span>{sourceHost(entry.data.url)}</span>
+              {entry.data.sourcePublished && (
+                <>
+                  <span aria-hidden="true">·</span>
+                  <time datetime={isoDate(entry.data.sourcePublished)}>
+                    {formatDate(entry.data.sourcePublished)}
+                  </time>
+                </>
+              )}
+            </p>
+
+            <p class="reading__note">{entry.data.note}</p>
+
+            {entry.data.tags.length > 0 && (
+              <ul class="tag-list reading__item-tags">
+                {entry.data.tags.map((tag) => (
+                  <li>
+                    <span class="tag-pill">{tag}</span>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </li>
+        ))}
+      </ul>
+    ) : (
+      <p class="reading__empty">
+        Nothing collected yet. Add a YAML file under <code>src/content/reading/</code> — the schema is
+        in <code>src/content.config.ts</code>.
+      </p>
+    )
+  }
+</BaseLayout>
+
+<style>
+  .page-head {
+    max-width: var(--measure);
+    padding-bottom: var(--space-md);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .page-head__title {
+    font-family: var(--font-serif);
+    font-size: var(--step-3);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+  }
+
+  .page-head__sub {
+    margin-top: var(--space-2xs);
+    color: var(--text-muted);
+    font-size: var(--step--1);
+  }
+
+  .reading__tags {
+    margin-top: var(--space-md);
+  }
+
+  .reading {
+    margin: var(--space-sm) 0 0;
+    padding: 0;
+    list-style: none;
+    max-width: var(--measure);
+  }
+
+  .reading__item {
+    padding-block: var(--space-md);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .reading__item:last-child {
+    border-bottom: 0;
+  }
+
+  .reading__title {
+    font-family: var(--font-serif);
+    font-size: var(--step-1);
+    font-weight: 600;
+    letter-spacing: -0.015em;
+    line-height: 1.3;
+    text-wrap: balance;
+  }
+
+  .reading__title a {
+    text-decoration: none;
+  }
+
+  .reading__title a:hover {
+    color: var(--accent);
+  }
+
+  .reading__meta {
+    margin-top: var(--space-2xs);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-xs);
+    font-size: var(--step--1);
+    color: var(--text-faint);
+  }
+
+  .reading__note {
+    margin-top: var(--space-xs);
+    color: var(--text-muted);
+  }
+
+  .reading__item-tags {
+    margin-top: var(--space-sm);
+  }
+
+  .reading__empty {
+    margin-top: var(--space-lg);
+    color: var(--text-muted);
+  }
+</style>

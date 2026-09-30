@@ -1,0 +1,10 @@
+title: 'Orca: A Distributed Serving System for Transformer-Based Generative Models'
+url: 'https://www.usenix.org/conference/osdi22/presentation/yu'
+author: 'Gyeong-In Yu et al.'
+sourcePublished: 2022-07-11
+added: 2025-03-05
+note: >-
+  Where iteration-level scheduling — what everyone now calls continuous batching
+  — was first described. Worth reading alongside a modern scheduler to see how
+  much of the design survived and how much was reinvented under a new name.
+tags: ['Inference', 'Scheduling']
