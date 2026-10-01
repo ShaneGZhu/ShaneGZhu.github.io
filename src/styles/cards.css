@@ -1,0 +1,18 @@
+/*
+ * Layout for a stack of reading cards.
+ *
+ * Lives in a shared file rather than in one page's scoped styles because both the
+ * reading page and the per-tag pages show the same stack; Astro scopes component
+ * styles, so a page cannot rely on another page's CSS being loaded.
+ *
+ * One column, not a grid: the notes vary in height, so a multi-column grid would
+ * leave holes and make the eye jump sideways.
+ */
+.cards {
+  margin: var(--space-lg) 0 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: var(--space-sm);
+  max-width: var(--measure);
+}

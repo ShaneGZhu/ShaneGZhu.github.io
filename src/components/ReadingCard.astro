@@ -1,0 +1,158 @@
+---
+/**
+ * One card in the reading list.
+ *
+ * Shared by the reading page and the per-tag pages so an entry looks the same in
+ * both places. The card is visually distinct from a post card on purpose: a
+ * bordered box with a smaller, sans title, because these are citations to scan
+ * rather than pieces to read here.
+ */
+import { sourceHost, type ReadingEntry } from '../utils/reading';
+import { tagSlug } from '../utils/posts';
+import { formatDate, isoDate } from '../utils/format';
+
+interface Props {
+  entry: ReadingEntry;
+  /**
+   * Heading level for the entry title. The reading page nests an entry directly
+   * under its h1, so `h2` is right there; a per-tag page has a "Related reading"
+   * heading in between, so the entries become `h3`.
+   */
+  headingLevel?: 'h2' | 'h3';
+}
+
+const { entry, headingLevel = 'h2' } = Astro.props;
+const Heading = headingLevel;
+---
+
+<li class="card">
+  {/*
+    The heading holds the link, so the entry reads as a citation and the whole
+    title is the click target. `rel="noopener"` because the destination is not
+    ours; no `target="_blank"`, so the back button still works.
+  */}
+  <Heading class="card__title">
+    <a href={entry.data.url} rel="noopener">
+      {entry.data.title}
+      {/* Marks the link as leaving the site. */}
+      <span class="card__out" aria-hidden="true">↗</span>
+    </a>
+  </Heading>
+
+  <p class="card__note">{entry.data.note}</p>
+
+  <p class="card__meta">
+    {
+      entry.data.author && (
+        <>
+          <span>{entry.data.author}</span>
+          <span class="card__sep" aria-hidden="true">
+            ·
+          </span>
+        </>
+      )
+    }
+    <span class="card__host">{sourceHost(entry.data.url)}</span>
+    {
+      entry.data.sourcePublished && (
+        <>
+          <span class="card__sep" aria-hidden="true">
+            ·
+          </span>
+          <time datetime={isoDate(entry.data.sourcePublished)}>
+            {formatDate(entry.data.sourcePublished)}
+          </time>
+        </>
+      )
+    }
+  </p>
+
+  {
+    entry.data.tags.length > 0 && (
+      <ul class="tag-list card__tags">
+        {entry.data.tags.map((tag) => (
+          <li>
+            <a class="tag-pill" href={`/blog/tags/${tagSlug(tag)}/`}>
+              {tag}
+            </a>
+          </li>
+        ))}
+      </ul>
+    )
+  }
+</li>
+
+<style>
+  .card {
+    padding: var(--space-md);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    background-color: var(--bg-raised);
+    transition: border-color var(--transition), box-shadow var(--transition),
+      transform var(--transition);
+  }
+
+  .card:hover {
+    border-color: var(--border-strong);
+    box-shadow: var(--shadow-md);
+    transform: translateY(-1px);
+  }
+
+  /* Smaller than a post title, and sans rather than serif. */
+  .card__title {
+    font-family: var(--font-sans);
+    font-size: var(--step-0);
+    font-weight: 620;
+    line-height: 1.4;
+    letter-spacing: -0.005em;
+    text-wrap: pretty;
+  }
+
+  .card__title a {
+    text-decoration: none;
+  }
+
+  /* Only the title tints on hover; the card's border already marks the target. */
+  .card:hover .card__title a {
+    color: var(--accent);
+  }
+
+  .card__out {
+    margin-left: 0.35em;
+    font-size: 0.85em;
+    color: var(--text-faint);
+  }
+
+  .card:hover .card__out {
+    color: var(--accent);
+  }
+
+  .card__note {
+    margin-top: var(--space-xs);
+    font-size: calc(var(--step-0) * 0.95);
+    line-height: 1.6;
+    color: var(--text-muted);
+  }
+
+  .card__meta {
+    margin-top: var(--space-sm);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2xs) var(--space-xs);
+    font-size: var(--step--1);
+    color: var(--text-faint);
+  }
+
+  .card__host {
+    font-variant-numeric: tabular-nums;
+  }
+
+  .card__sep {
+    color: var(--border-strong);
+  }
+
+  .card__tags {
+    margin-top: var(--space-xs);
+  }
+</style>

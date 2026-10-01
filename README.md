@@ -76,6 +76,11 @@ badged), `Tutorial`, or `Reference`. Keeping the two apart means clicking a tag
 always means the same thing, instead of mixing subjects with page types. The
 reading list uses the same tag list; its entries have no kind.
 
+A tag page shows both halves: my posts, then a "Related reading" section with the
+collected items on that subject, because a tag names a subject and both kinds of
+content cover it. A tag page is created if either half uses the tag, so a subject
+that only appears in the reading list still gets a page.
+
 ### Syntax beyond standard Markdown
 
 Math, with `$inline$` and `$$display$$`:
@@ -172,14 +177,14 @@ at GitHub, and update `SITE.url` in `src/site.config.mjs` to match.
 scripts/             make-favicons.mjs — regenerates public/ icons from the avatar
 src/
 ├── assets/          images referenced from posts (optimized at build)
-├── components/      Header, Footer, PostCard, TableOfContents, Pagination, Icon
+├── components/      Header, Footer, PostCard, ReadingCard, TableOfContents, Pagination, Icon
 ├── content/posts/   the posts themselves
 ├── content/reading/ other people's writing, as small YAML entries
 ├── layouts/         BaseLayout (document shell), PostLayout (articles)
 ├── markdown/        Markdown pipeline plugins (math, callouts, figures, …)
 ├── pages/           index.astro (root redirect) + 404.astro
 │   └── blog/        every real page, served under /blog/
-├── styles/          global.css (tokens, chrome), prose.css (article body)
+├── styles/          global.css (tokens, chrome), prose.css (article body), cards.css
 ├── utils/           post queries, tag grouping, date and reading-time helpers
 ├── content.config.ts   frontmatter schema
 └── site.config.mjs     site metadata and navigation

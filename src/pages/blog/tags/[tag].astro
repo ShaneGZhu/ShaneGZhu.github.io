@@ -1,44 +1,100 @@
 ---
 /**
- * Posts for a single tag.
+ * Everything carrying a single tag: my writing first, then related reading.
+ *
+ * Both halves are shown because a tag means the subject, and a subject is
+ * covered by what I wrote and by what I collected. The posts stay first so the
+ * tag pages continue to work as an index of my own work, with the collected
+ * items in a clearly separate section below.
  */
 import type { GetStaticPaths } from 'astro';
 
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import PostCard from '../../../components/PostCard.astro';
-import { getPublishedPosts, collectTags, postsWithTag, type Post } from '../../../utils/posts';
+import ReadingCard from '../../../components/ReadingCard.astro';
+import { getPublishedPosts, collectTags, postsWithTag, tagSlug, type Post } from '../../../utils/posts';
+import { getReadingList, readingWithTag, collectReadingTags, type ReadingEntry } from '../../../utils/reading';
+import '../../../styles/cards.css';
 
 export const getStaticPaths: GetStaticPaths = async () => {
   const posts = await getPublishedPosts();
-  return collectTags(posts).map((tag) => ({
-    params: { tag: tag.slug },
-    props: { label: tag.label, posts: postsWithTag(posts, tag.slug) },
+  const reading = await getReadingList();
+
+  // A tag page exists if either half uses the tag, so a tag that only appears on
+  // a collected item still gets a page rather than a dead link.
+  const slugs = new Map<string, string>();
+  for (const tag of [...collectTags(posts), ...collectReadingTags(reading)]) {
+    const slug = typeof tag === 'string' ? tagSlug(tag) : tag.slug;
+    const label = typeof tag === 'string' ? tag : tag.label;
+    if (!slugs.has(slug)) slugs.set(slug, label);
+  }
+
+  return [...slugs].map(([slug, label]) => ({
+    params: { tag: slug },
+    props: {
+      label,
+      posts: postsWithTag(posts, slug),
+      entries: readingWithTag(reading, label),
+    },
   }));
 };
 
 interface Props {
   label: string;
   posts: Post[];
+  entries: ReadingEntry[];
 }
 
-const { label, posts } = Astro.props;
+const { label, posts, entries } = Astro.props;
+
+const postCount = `${posts.length} ${posts.length === 1 ? 'post' : 'posts'}`;
+// "recommended" rather than "collected", matching how the reading page frames it.
+const entryCount = `${entries.length} recommended`;
+
+const summary = [
+  posts.length > 0 ? postCount : null,
+  entries.length > 0 ? entryCount : null,
+]
+  .filter(Boolean)
+  .join(' · ');
 ---
 
 <BaseLayout
   title={`Tagged “${label}”`}
-  description={`Every post tagged “${label}” — ${posts.length} ${posts.length === 1 ? 'article' : 'articles'} on this topic, newest first.`}
+  description={`Everything tagged “${label}” — ${summary}, newest first.`}
 >
   <header class="page-head">
     <p class="eyebrow">Tag</p>
     <h1 class="page-head__title">{label}</h1>
     <p class="page-head__sub">
-      {posts.length} {posts.length === 1 ? 'post' : 'posts'} · <a href="/blog/tags/">all tags</a>
+      {summary} · <a href="/blog/tags/">all tags</a>
     </p>
   </header>
 
-  <div class="page-list">
-    {posts.map((post) => <PostCard post={post} />)}
-  </div>
+  {
+    posts.length > 0 && (
+      <div class="page-list">
+        {posts.map((post) => (
+          <PostCard post={post} />
+        ))}
+      </div>
+    )
+  }
+
+  {
+    entries.length > 0 && (
+      <section class="related" aria-labelledby="related-heading">
+        <h2 class="related__title" id="related-heading">
+          Related reading
+        </h2>
+        <ul class="cards">
+          {entries.map((entry) => (
+            <ReadingCard entry={entry} headingLevel="h3" />
+          ))}
+        </ul>
+      </section>
+    )
+  }
 </BaseLayout>
 
 <style>
@@ -64,5 +120,24 @@ const { label, posts } = Astro.props;
 
   .page-list {
     margin-top: var(--space-sm);
+  }
+
+  .related {
+    margin-top: var(--space-xl);
+    padding-top: var(--space-lg);
+    border-top: 1px solid var(--border);
+  }
+
+  .related__title {
+    font-size: var(--step-0);
+    font-weight: 620;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+  }
+
+  /* The card stack supplies its own top margin, so pull it back a little. */
+  .related .cards {
+    margin-top: var(--space-md);
   }
 </style>
