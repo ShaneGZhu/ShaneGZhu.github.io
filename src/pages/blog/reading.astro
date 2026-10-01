@@ -15,17 +15,23 @@ import { getReadingList, sourceHost } from '../../utils/reading';
 import { formatDate, isoDate } from '../../utils/format';
 
 const entries = await getReadingList();
+
+/*
+ * Built here rather than inline in the markup: an apostrophe inside a JSX text
+ * expression terminates it, so "I'd" cannot appear literally between {braces}.
+ */
+const recommendationLabel =
+  entries.length === 1 ? 'One thing I recommend' : `${entries.length} things I recommend`;
 ---
 
 <BaseLayout
   title="Reading"
-  description="Articles and posts by other people that I keep coming back to, with a note on why each one is worth your time."
+  description="Essays and papers I recommend, each with a note on why it is worth your time."
 >
   <header class="page-head">
     <h1 class="page-head__title">Reading</h1>
     <p class="page-head__sub">
-      {entries.length} {entries.length === 1 ? 'item' : 'items'} collected. Other people's writing —
-      each one links to the original.
+      {recommendationLabel}: essays and papers worth your time. Each one links to the original.
     </p>
   </header>
 
