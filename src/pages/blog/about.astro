@@ -6,9 +6,8 @@
 import { Image } from 'astro:assets';
 
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import Icon from '../../components/Icon.astro';
 import avatar from '../../assets/avatar.jpg';
-import { SITE, SOCIAL, FOCUS } from '../../site.config.mjs';
+import { SITE, FOCUS } from '../../site.config.mjs';
 import '../../styles/prose.css';
 ---
 
@@ -66,18 +65,6 @@ import '../../styles/prose.css';
       }
     </ul>
 
-    <h2>Elsewhere</h2>
-    <ul class="elsewhere">
-      {SOCIAL.map((item) => (
-        <li>
-          <a class="elsewhere__link" href={item.href}>
-            <Icon name={item.icon} />
-            <span>{item.label}</span>
-          </a>
-        </li>
-      ))}
-    </ul>
-
     <h2>Get in touch</h2>
     <p>
       Email is <a href={`mailto:${SITE.email}`}>{SITE.email}</a>. For anything code-related, a
@@ -122,20 +109,4 @@ import '../../styles/prose.css';
     margin-top: var(--space-lg);
   }
 
-  .elsewhere {
-    list-style: none;
-    padding: 0;
-  }
-
-  .elsewhere__link {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.45em;
-    text-decoration: none;
-  }
-
-  .elsewhere__link:hover span {
-    text-decoration: underline;
-    text-underline-offset: 0.2em;
-  }
 </style>
