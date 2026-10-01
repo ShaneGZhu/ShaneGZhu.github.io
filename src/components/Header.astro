@@ -23,7 +23,28 @@ const isActive = (href: string) => {
   <div class="site-header__inner shell">
     <a class="brand" href="/blog/">{SITE.title}</a>
 
-    <nav class="nav" aria-label="Primary">
+    {/*
+      Collapses the navigation below 48rem. The button is rendered always but only
+      displayed at narrow widths, and the markup is complete either way so the
+      links survive with no JavaScript.
+    */}
+    <button
+      class="nav-toggle"
+      type="button"
+      data-nav-toggle
+      aria-controls="primary-nav"
+      aria-expanded="false"
+      aria-label="Menu"
+    >
+      <svg class="nav-toggle__open" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+        <path d="M3.5 6.5h17M3.5 12h17M3.5 17.5h17" />
+      </svg>
+      <svg class="nav-toggle__close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+        <path d="M6 6l12 12M18 6L6 18" />
+      </svg>
+    </button>
+
+    <nav class="nav" id="primary-nav" data-nav-panel aria-label="Primary">
       {
         NAV.map((item) => (
           <a
@@ -48,3 +69,47 @@ const isActive = (href: string) => {
     </button>
   </div>
 </header>
+
+<script>
+  /*
+   * Collapsible navigation.
+   *
+   * The panel is a second header row rather than an overlay, so it needs no focus
+   * trap: it is ordinary content and the links are reachable by Tab in document
+   * order. Escape closes it and returns focus to the button, and a click outside
+   * closes it, which is what people expect from a menu that pushes content down.
+   */
+  const toggle = document.querySelector<HTMLButtonElement>('[data-nav-toggle]');
+  const panel = document.querySelector<HTMLElement>('[data-nav-panel]');
+
+  if (toggle && panel) {
+    const setOpen = (open: boolean) => {
+      toggle.setAttribute('aria-expanded', String(open));
+      panel.toggleAttribute('data-open', open);
+    };
+
+    toggle.addEventListener('click', () => {
+      setOpen(toggle.getAttribute('aria-expanded') !== 'true');
+    });
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key !== 'Escape' || toggle.getAttribute('aria-expanded') !== 'true') return;
+      setOpen(false);
+      toggle.focus();
+    });
+
+    document.addEventListener('click', (event) => {
+      const target = event.target as Node;
+      if (toggle.getAttribute('aria-expanded') !== 'true') return;
+      if (toggle.contains(target) || panel.contains(target)) return;
+      setOpen(false);
+    });
+
+    // A resize into the wide layout leaves no visible button, so drop the state
+    // rather than keeping a stale `aria-expanded="true"` in the markup.
+    const wide = window.matchMedia('(min-width: 48rem)');
+    wide.addEventListener('change', (event) => {
+      if (event.matches) setOpen(false);
+    });
+  }
+</script>

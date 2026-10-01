@@ -314,8 +314,10 @@ video {
 
 .site-header__inner {
   /*
-   * Brand | nav | toggle on one row. Below 34rem the three don't fit, so the nav
-   * drops to a second row rather than squashing the toggle into an ellipse.
+   * Wide layout: brand | nav | theme button on one row.
+   *
+   * The nav toggle sits in the markup between brand and theme button; it is
+   * `display: none` here and takes the nav's place below 48rem.
    */
   display: grid;
   grid-template-areas: 'brand nav toggle';
@@ -323,6 +325,48 @@ video {
   align-items: center;
   gap: var(--space-md);
   min-height: 4rem;
+}
+
+/* Collapsible-menu button: only exists in the narrow layout. */
+.nav-toggle {
+  display: none;
+  grid-area: menubutton;
+  place-items: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  min-width: 2.25rem;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background-color: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: color var(--transition), border-color var(--transition),
+    background-color var(--transition);
+}
+
+.nav-toggle:hover {
+  color: var(--text);
+  border-color: var(--border-strong);
+  background-color: var(--bg-subtle);
+}
+
+.nav-toggle svg {
+  width: 1.15rem;
+  height: 1.15rem;
+}
+
+/* One glyph per state. */
+.nav-toggle__close {
+  display: none;
+}
+
+.nav-toggle[aria-expanded='true'] .nav-toggle__open {
+  display: none;
+}
+
+.nav-toggle[aria-expanded='true'] .nav-toggle__close {
+  display: block;
 }
 
 .brand {
@@ -374,19 +418,51 @@ video {
   border-bottom-color: var(--accent);
 }
 
-@media (max-width: 34rem) {
+/*
+ * Narrow layout: brand on the left, menu and theme buttons on the right, and the
+ * navigation revealed as a row of its own when the menu is opened. Collapsing it
+ * keeps the header one line tall instead of the two rows it took when the links
+ * wrapped, and it means adding another section later costs nothing.
+ */
+@media (max-width: 48rem) {
   .site-header__inner {
     grid-template-areas:
-      'brand toggle'
-      'nav nav';
-    grid-template-columns: 1fr auto;
+      'brand menubutton toggle'
+      'nav nav nav';
+    grid-template-columns: 1fr auto auto;
     gap: var(--space-xs) var(--space-sm);
     padding-block: var(--space-xs);
   }
 
+  .nav-toggle {
+    display: grid;
+  }
+
+  /*
+   * Only hide the panel when scripting is available: with JavaScript off the
+   * `js` class is absent, the button does nothing, and every link must stay
+   * visible rather than being locked behind a dead control.
+   */
+  .js .nav {
+    display: none;
+  }
+
+  .js .nav[data-open] {
+    display: flex;
+  }
+
   .nav {
     justify-content: flex-start;
+    flex-wrap: wrap;
+    row-gap: var(--space-xs);
     padding-bottom: var(--space-2xs);
+  }
+
+  /* A visible seam between the header row and the revealed panel. */
+  .js .nav[data-open] {
+    margin-top: var(--space-2xs);
+    padding-top: var(--space-sm);
+    border-top: 1px solid var(--border);
   }
 }
 

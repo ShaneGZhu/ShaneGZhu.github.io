@@ -206,6 +206,12 @@ src/
 - Inter and Newsreader are self-hosted: Astro downloads the Latin subsets at
   build time. Chinese text falls through to the system font, which is both
   faster and better-looking than a webfont CJK subset.
+- The navigation collapses behind a menu button below 48rem, which keeps the
+  header one line tall instead of the two it took when six links wrapped. The
+  panel is a second header row rather than an overlay, so it needs no focus trap.
+  It is progressively enhanced: an inline script sets a `js` class on `<html>`
+  before first paint, and only that class hides the links, so with JavaScript
+  unavailable every link stays visible instead of sitting behind a dead control.
 - Icons are inlined single-path SVGs in `src/components/Icon.astro`, so they need
   no icon font and no extra request. The `size` prop is in `em`, so icons scale
   with the fluid type scale; it reaches the SVG as a `--icon-size` custom

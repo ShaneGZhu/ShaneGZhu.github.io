@@ -92,6 +92,15 @@ const ogImage = image ? new URL(image, Astro.site ?? SITE.url) : undefined;
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
 
     {/*
+      Marks the document as script-capable before first paint. The collapsed
+      navigation is only hidden behind this class, so with JavaScript unavailable
+      every link stays in the markup and visible instead of becoming unreachable.
+    */}
+    <script is:inline>
+      document.documentElement.classList.add('js');
+    </script>
+
+    {/*
       Theme is resolved before first paint to avoid a flash of the wrong colours.
       It is a blocking inline script by design; keep it small.
     */}
