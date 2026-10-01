@@ -21,7 +21,8 @@ interface Props {
 }
 
 const { post, headings, newer, older } = Astro.props;
-const { title, description, pubDate, updatedDate, tags, lang, cover, coverAlt, draft } = post.data;
+const { title, description, pubDate, updatedDate, tags, kind, lang, cover, coverAlt, draft } =
+  post.data;
 
 const minutes = readingTime(post.body);
 
@@ -59,6 +60,9 @@ const minutes = readingTime(post.body);
           )
         }
       </div>
+
+      {/* `Note` is the default kind, so badging it would mark almost everything. */}
+      {kind !== 'Note' && <span class="post__kind">{kind}</span>}
 
       <h1 class="post__title" lang={lang}>{title}</h1>
       <p class="post__description" lang={lang}>{description}</p>
@@ -133,6 +137,18 @@ const minutes = readingTime(post.body);
     font-size: var(--step--1);
     color: var(--text-faint);
     font-variant-numeric: tabular-nums;
+  }
+
+  .post__kind {
+    display: inline-block;
+    margin-top: var(--space-sm);
+    padding: 0.1em 0.6em;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    color: var(--text-muted);
+    font-size: var(--step--1);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
   }
 
   .post__title {

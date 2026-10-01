@@ -7,4 +7,4 @@ note: >-
   Where iteration-level scheduling — what everyone now calls continuous batching
   — was first described. Worth reading alongside a modern scheduler to see how
   much of the design survived and how much was reinvented under a new name.
-tags: ['Inference', 'Scheduling']
+tags: ['Inference']

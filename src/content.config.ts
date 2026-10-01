@@ -2,6 +2,29 @@ import { defineCollection } from 'astro:content';
 import { z } from 'astro/zod';
 import { glob } from 'astro/loaders';
 
+/**
+ * The controlled vocabulary for subject tags.
+ *
+ * Tags describe one dimension only — the subject. What a piece *is* (a tutorial,
+ * a reference page) is the separate `kind` field below, because mixing the two in
+ * one list makes a tag page unpredictable: clicking "Inference" would give you a
+ * subject while clicking "Reference" would give you a page type.
+ *
+ * Keeping it an enum means a typo or an invented tag fails the build instead of
+ * quietly creating a tag page with one post on it. Add a term here when a real
+ * need appears, rather than tagging each post with something new.
+ */
+const TOPICS = [
+  'Inference', // serving, scheduling, batching, memory
+  'Kernels', // operators, performance work, profiling
+  'RL', // reinforcement learning infrastructure
+  'Tooling', // frameworks, build and engineering practice
+  'Writing', // about this blog itself
+] as const;
+
+/** What a piece is, as opposed to what it is about. */
+const KINDS = ['Note', 'Tutorial', 'Reference'] as const;
+
 const posts = defineCollection({
   loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/posts' }),
   schema: ({ image }) =>
@@ -10,7 +33,10 @@ const posts = defineCollection({
       description: z.string(),
       pubDate: z.coerce.date(),
       updatedDate: z.coerce.date().optional(),
-      tags: z.array(z.string()).default([]),
+      /** Subject tags, from the controlled list. */
+      tags: z.array(z.enum(TOPICS)).default([]),
+      /** Shown as a badge on the post; `Note` is the default and is not badged. */
+      kind: z.enum(KINDS).default('Note'),
       /** `en` or `zh` — drives the `lang` attribute and the date formatting. */
       lang: z.enum(['en', 'zh']).default('en'),
       /** Hidden from listings and feeds, still reachable by direct URL. */
@@ -47,7 +73,8 @@ const reading = defineCollection({
     added: z.coerce.date(),
     /** One or two sentences in my own words. */
     note: z.string(),
-    tags: z.array(z.string()).default([]),
+    /** Subject tags, from the same controlled list as posts. */
+    tags: z.array(z.enum(TOPICS)).default([]),
   }),
 });
 

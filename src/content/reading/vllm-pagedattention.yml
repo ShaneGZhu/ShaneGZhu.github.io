@@ -11,4 +11,4 @@ note: >-
   accounting in the middle section — it explains why continuous batching alone
   does not get you far once sequences get long, which is the part most
   reimplementations skip.
-tags: ['Inference', 'KV Cache']
+tags: ['Inference']

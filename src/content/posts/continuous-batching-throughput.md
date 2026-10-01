@@ -6,7 +6,8 @@ description: >-
   three places real implementations lose the throughput they just won.
 pubDate: 2025-01-18
 updatedDate: 2025-02-02
-tags: ['Inference', 'Scheduling', 'Performance']
+tags: ['Inference', 'Kernels']
+kind: 'Tutorial'
 lang: 'en'
 featured: true
 cover: '../../assets/batching-cover.jpg'

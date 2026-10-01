@@ -5,7 +5,8 @@ description: >-
   supports — headings, code, math, callouts, tables, footnotes, images and the
   awkward edge cases — so regressions are obvious.
 pubDate: 2025-03-09
-tags: ['Meta', 'Reference']
+tags: ['Writing']
+kind: 'Reference'
 lang: 'en'
 ---
 

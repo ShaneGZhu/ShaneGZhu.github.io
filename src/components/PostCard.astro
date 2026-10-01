@@ -13,7 +13,7 @@ interface Props {
 }
 
 const { post, featured = false } = Astro.props;
-const { title, description, pubDate, tags, lang, draft } = post.data;
+const { title, description, pubDate, tags, kind, lang, draft } = post.data;
 const minutes = readingTime(post.body);
 ---
 
@@ -22,6 +22,8 @@ const minutes = readingTime(post.body);
     <time datetime={isoDate(pubDate)}>{formatDate(pubDate)}</time>
     <span aria-hidden="true">·</span>
     <span>{readingTimeLabel(minutes)}</span>
+    {/* `Note` is the default kind, so badging it would mark almost everything. */}
+    {kind !== 'Note' && <span class="post-card__kind">{kind}</span>}
     {draft && <span class="post-card__draft">Draft</span>}
   </div>
 
@@ -64,6 +66,17 @@ const minutes = readingTime(post.body);
     font-size: var(--step--1);
     color: var(--text-faint);
     font-variant-numeric: tabular-nums;
+  }
+
+  /* Same shape as the Draft badge, but neutral: kind is not a warning. */
+  .post-card__kind {
+    padding: 0.05em 0.5em;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    color: var(--text-muted);
+    font-size: 0.85em;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
   }
 
   .post-card__draft {

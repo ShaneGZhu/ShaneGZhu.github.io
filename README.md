@@ -39,8 +39,9 @@ description: >-
   One or two sentences. Used in listings and link previews, so
   write it for a reader who has not opened the post yet.
 pubDate: 2025-03-09
-tags: ['Inference', 'Scheduling']
-lang: 'en'          # 'en' or 'zh' — sets the lang attribute and date format
+tags: ['Inference']   # subject tags, from a controlled list
+kind: 'Tutorial'      # Note (default) | Tutorial | Reference
+lang: 'en'            # 'en' or 'zh' — sets the lang attribute and date format
 ---
 
 Body text starts here.
@@ -58,6 +59,22 @@ Optional frontmatter:
 
 Frontmatter is validated by the schema in `src/content.config.ts`. A typo fails
 the build with the field name, rather than rendering a broken page.
+
+### Tags and kinds
+
+Tags carry one dimension only — the **subject** — and come from a fixed list in
+`src/content.config.ts`:
+
+`Inference` · `Kernels` · `RL` · `Tooling` · `Writing`
+
+Anything outside that list fails the build, naming the values that are allowed.
+Add a term to the list when a real need appears rather than inventing a tag per
+post: a tag that appears on a single post makes its own tag page useless.
+
+What a piece *is* goes in the separate `kind` field — `Note` (the default, not
+badged), `Tutorial`, or `Reference`. Keeping the two apart means clicking a tag
+always means the same thing, instead of mixing subjects with page types. The
+reading list uses the same tag list; its entries have no kind.
 
 ### Syntax beyond standard Markdown
 
