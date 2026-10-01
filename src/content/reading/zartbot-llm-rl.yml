@@ -1,0 +1,10 @@
+title: '从会说话到会试错: 一篇读懂 LLM Reinforcement Learning'
+url: 'https://zartbot.github.io/blog/algo/llm_rl/'
+added: 2026-10-01
+note: >-
+  A Chinese-language introduction to post-training that spends its words on the
+  loop rather than on a catalogue of algorithm names: sample a rollout, score it,
+  update the policy. PPO and GRPO appear as answers to a question instead of as
+  headings, which is the right order to meet them in. About 35 minutes, and worth
+  reading before the papers it summarises.
+tags: ['RL']
