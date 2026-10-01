@@ -217,6 +217,13 @@ const hasMore = posts.length > recent.length;
     gap: var(--space-md) var(--space-lg);
     grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr));
     max-width: var(--measure-wide);
+    /*
+     * Cards size to their own text rather than stretching to the tallest in the
+     * row. Descriptions differ in length, so stretching left up to 57px of blank
+     * space under the shorter ones; a ragged bottom is what a grid of varying text
+     * normally looks like and reads better than empty card interiors.
+     */
+    align-items: start;
   }
 
   .focus__title {

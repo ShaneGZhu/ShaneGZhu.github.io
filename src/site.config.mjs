@@ -71,6 +71,11 @@ export const FOCUS = [
     ],
   },
   {
+    title: 'Router',
+    body: 'Session and KV-cache aware routing, contributing to Dynamo.',
+    links: [{ label: 'Dynamo', href: 'https://github.com/ai-dynamo/dynamo' }],
+  },
+  {
     title: 'Kernel Optimization',
     body: 'Designing and tuning high-performance custom kernels.',
   },
