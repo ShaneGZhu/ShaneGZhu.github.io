@@ -476,3 +476,129 @@
   font-family: var(--font-mono);
   font-size: 0.85em;
 }
+
+/* ---------- Dense / hardcore series ---------- */
+/*
+ * Used by long technical series that want a tighter page than the default
+ * essay rhythm: smaller type, closer leading, and shorter gaps between blocks.
+ * Scoped to `.prose--dense` so other posts stay on the open measure above.
+ */
+.prose--dense {
+  font-size: 0.925rem;
+  line-height: 1.72;
+  --bleed: 1.25rem;
+}
+
+.prose--dense[lang='zh'],
+.prose--dense[lang^='zh-'] {
+  line-height: 1.78;
+  letter-spacing: 0.005em;
+}
+
+.prose--dense > * + * {
+  margin-top: calc(var(--space-md) * 0.85);
+}
+
+.prose--dense > h2 {
+  margin-top: calc(var(--space-xl) * 0.9);
+  font-size: var(--step-1);
+  letter-spacing: -0.01em;
+}
+
+.prose--dense > h3 {
+  margin-top: calc(var(--space-lg) * 0.9);
+  font-size: var(--step-0);
+}
+
+.prose--dense > h4 {
+  margin-top: var(--space-md);
+  font-size: 0.85rem;
+}
+
+.prose--dense :is(p, li) {
+  /* Keep paragraphs from stretching on a slightly denser grid. */
+  text-wrap: pretty;
+}
+
+.prose--dense :is(pre, .table-wrapper, figure) {
+  margin-block: calc(var(--space-md) * 0.9);
+}
+
+.prose--dense pre {
+  font-size: 0.82rem;
+  line-height: 1.55;
+}
+
+.prose--dense table {
+  font-size: 0.88rem;
+}
+
+.prose--dense :is(blockquote, .callout) {
+  font-size: 0.92em;
+}
+
+/* Title block: a touch smaller so the series reads as a technical dossier. */
+.post--dense .post__title {
+  font-size: clamp(1.65rem, 1.35rem + 1.2vw, 2.15rem);
+  letter-spacing: -0.02em;
+}
+
+.post--dense .post__description {
+  font-size: var(--step-0);
+  line-height: 1.65;
+  max-width: 40rem;
+}
+
+.post--dense .post__kind {
+  letter-spacing: 0.08em;
+  font-size: 0.68rem;
+}
+
+
+/* ---------- Mermaid diagrams ---------- */
+
+.prose .mermaid-diagram {
+  margin-block: var(--space-lg);
+  width: calc(100% + var(--bleed) * 2);
+  margin-inline: calc(var(--bleed) * -1);
+  padding: var(--space-md);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--bg-subtle);
+  overflow-x: auto;
+  text-align: center;
+}
+
+.prose .mermaid-diagram svg {
+  max-width: 100%;
+  height: auto;
+  display: inline-block;
+}
+
+.prose .mermaid-diagram--error {
+  color: var(--text-muted);
+  font-size: var(--step--1);
+  text-align: left;
+  white-space: pre-wrap;
+}
+
+/* ---------- Table polish ---------- */
+/* Headers may wrap; long inline code in cells should break rather than
+   force a horizontal scroll on a three-column comparison table. */
+.prose th {
+  white-space: normal;
+}
+
+.prose :is(td, th) code {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.prose--dense .table-wrapper {
+  margin-block: calc(var(--space-md) * 0.9);
+}
+
+.prose--dense :is(td, th) {
+  padding: 0.45em 0.65em;
+}

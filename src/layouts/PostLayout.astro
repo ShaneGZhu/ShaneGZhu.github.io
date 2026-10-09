@@ -21,10 +21,10 @@ interface Props {
 }
 
 const { post, headings, newer, older } = Astro.props;
-const { title, description, pubDate, updatedDate, tags, kind, lang, cover, coverAlt, draft } =
+const { title, description, pubDate, updatedDate, tags, kind, lang, cover, coverAlt, draft, density, readingMinutes } =
   post.data;
 
-const minutes = readingTime(post.body);
+const minutes = readingMinutes ?? readingTime(post.body);
 
 /*
  * Labels below are English regardless of the post's language: the date format is
@@ -43,7 +43,7 @@ const minutes = readingTime(post.body);
   modifiedTime={updatedDate}
   noindex={draft}
 >
-  <article class="post">
+  <article class:list={['post', density === 'dense' && 'post--dense']}>
     <header class="post__header">
       <div class="post__meta">
         <time datetime={isoDate(pubDate)}>{formatDate(pubDate)}</time>
@@ -92,7 +92,7 @@ const minutes = readingTime(post.body);
     }
 
     <div class="post__body">
-      <div class="prose" lang={lang}>
+      <div class:list={['prose', density === 'dense' && 'prose--dense']} lang={lang}>
         <slot />
       </div>
 
@@ -242,3 +242,66 @@ const minutes = readingTime(post.body);
     }
   }
 </style>
+
+<script is:inline>
+  /**
+   * Mermaid runs in the browser because diagram layout needs real CSSOM.
+   * The bundle is served from /vendor/mermaid.min.js and only loaded when the
+   * page actually contains diagrams, so other posts stay light.
+   */
+  (function () {
+    const nodes = document.querySelectorAll('.mermaid-diagram[data-mermaid]');
+    if (nodes.length === 0) return;
+
+    const load = (src) =>
+      new Promise((resolve, reject) => {
+        const existing = document.querySelector('script[data-mermaid-vendor]');
+        if (existing) {
+          if (window.mermaid) return resolve();
+          existing.addEventListener('load', () => resolve(), { once: true });
+          existing.addEventListener('error', reject, { once: true });
+          return;
+        }
+        const script = document.createElement('script');
+        script.src = src;
+        script.dataset.mermaidVendor = '1';
+        script.onload = () => resolve();
+        script.onerror = reject;
+        document.head.appendChild(script);
+      });
+
+    load('/vendor/mermaid.min.js')
+      .then(() => {
+        const mermaid = window.mermaid;
+        if (!mermaid) throw new Error('mermaid failed to load');
+        const dark = document.documentElement.dataset.theme === 'dark';
+        mermaid.initialize({
+          startOnLoad: false,
+          theme: dark ? 'dark' : 'neutral',
+          securityLevel: 'strict',
+          fontFamily: 'inherit',
+        });
+        return Promise.all(
+          Array.from(nodes).map(async (el, i) => {
+            const source = el.getAttribute('data-mermaid') || '';
+            try {
+              const { svg } = await mermaid.render('mermaid-' + i + '-' + Date.now(), source);
+              el.innerHTML = svg;
+              el.removeAttribute('data-mermaid');
+            } catch (error) {
+              el.classList.add('mermaid-diagram--error');
+              el.textContent =
+                'Failed to render mermaid diagram: ' +
+                (error && error.message ? error.message : error);
+            }
+          })
+        );
+      })
+      .catch((error) => {
+        for (const el of nodes) {
+          el.classList.add('mermaid-diagram--error');
+          el.textContent = 'Failed to load mermaid: ' + error;
+        }
+      });
+  })();
+</script>

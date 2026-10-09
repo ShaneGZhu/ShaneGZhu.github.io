@@ -10,6 +10,7 @@ import { figurePlugin } from './src/markdown/figure.mjs';
 import { cjkLineBreakPlugin } from './src/markdown/cjk.mjs';
 import { externalLinksPlugin } from './src/markdown/external-links.mjs';
 import { headingAnchorsPlugin, tableWrapperPlugin } from './src/markdown/html-polish.mjs';
+import { mermaidPlugin } from './src/markdown/mermaid.mjs';
 import { SITE } from './src/site.config.mjs';
 
 /**
@@ -28,7 +29,7 @@ const processor = satteri({
     subscript: true,
     smartPunctuation: { quotes: false, dashes: true, ellipses: true },
   },
-  mdastPlugins: [cjkLineBreakPlugin, calloutPlugin, katexPlugin, figurePlugin],
+  mdastPlugins: [cjkLineBreakPlugin, calloutPlugin, katexPlugin, figurePlugin, mermaidPlugin],
   hastPlugins: [headingAnchorsPlugin, tableWrapperPlugin, externalLinksPlugin],
 });
 

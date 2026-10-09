@@ -46,6 +46,13 @@ const posts = defineCollection({
       /** Optional hero image, optimized at build time. */
       cover: image().optional(),
       coverAlt: z.string().optional(),
+      /**
+       * Typographic density. `dense` is for long technical series that want a
+       * smaller measure of type and tighter rhythm than the default essay look.
+       */
+      density: z.enum(['normal', 'dense']).default('normal'),
+      /** Optional override for the auto-estimated reading time, in minutes. */
+      readingMinutes: z.number().int().positive().optional(),
     }),
 });
 
