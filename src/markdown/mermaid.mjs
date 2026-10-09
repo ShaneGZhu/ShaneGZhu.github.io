@@ -17,10 +17,16 @@ function escapeAttribute(value) {
     .replace(/>/g, '&gt;');
 }
 
+/**
+ * @param {string} html
+ * @param {{ sourceFormat: string }} ctx
+ * @returns {{ raw: string, mdxExpressions: false } | { type: 'html', value: string }}
+ */
 function wrap(html, ctx) {
-  return ctx.sourceFormat === 'mdx'
-    ? { raw: html, mdxExpressions: false }
-    : { type: 'html', value: html };
+  if (ctx.sourceFormat === 'mdx') {
+    return { raw: html, mdxExpressions: false };
+  }
+  return { type: 'html', value: html };
 }
 
 export const mermaidPlugin = {
