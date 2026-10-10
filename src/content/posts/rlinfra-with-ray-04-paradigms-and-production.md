@@ -220,5 +220,7 @@ ray.serve   ray.train   ray.data   ray.tune   RLlib   ActorPool
 | [二](/blog/posts/rlinfra-with-ray-02-placement-and-rank/) | PG 与 rank 稳定 | bundle 重排序是正确性 |
 | [三](/blog/posts/rlinfra-with-ray-03-async-engines-data-plane/) | 引擎与数据面 | 子进程 + 引用传递 + 版本屏障 |
 | 本篇 | 生产 API 与范式 | 抽象每加一层，代码涨一个量级 |
+| [五](/blog/posts/rlinfra-with-ray-05-multinode-concurrency-process/) | 多机、并发池、进程监督 | 角色资源进 bundle |
+| [六](/blog/posts/rlinfra-with-ray-06-api-inventory/) | API 对账与源码地图 | 读框架时的速查表 |
 
 配套仓库 `Ray-Learn` 提供 20 课可运行脚本与 API 对账表。读源码可以从 slime 的 `slime/ray/` 开始——1,228 行，适合整个通读一遍；读完再看 verl 的 `single_controller/`，会更清楚「抽象贵在哪里」。
