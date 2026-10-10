@@ -256,3 +256,16 @@ assert ray.cluster_resources()['GPU'] == expected
 | 作业 | 统一入口 + 账本断言 |
 
 下一篇是附录：把各框架真实用到的 Ray API 压成一张对账表，方便读源码时对照。
+
+## 源码与仓库
+
+| 用途 | 链接 |
+| --- | --- |
+| 本系列配套练习（20 课脚本 + API 对账） | [MLsys-Note/Ray-Learn](https://github.com/ShaneGZhu/MLsys-Note/tree/main/Ray-Learn) |
+| Ray | [ray-project/ray](https://github.com/ray-project/ray) |
+| slime（最小编排） | [THUDM/slime](https://github.com/THUDM/slime) |
+| miles | [radixark/miles](https://github.com/radixark/miles) |
+| verl | [verl-project/verl](https://github.com/verl-project/verl) |
+| NeMo-RL | [NVIDIA/NeMo-RL](https://github.com/NVIDIA/NeMo-RL) |
+| AReaL | [areal-project/AReaL](https://github.com/areal-project/AReaL) |
+| prime-rl | [PrimeIntellect-ai/prime-rl](https://github.com/PrimeIntellect-ai/prime-rl) |

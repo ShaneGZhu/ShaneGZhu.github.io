@@ -283,3 +283,16 @@ flowchart TB
 | env 注入 | 启动期一致性 | slime `utils.py` |
 
 下一篇进入数据面与引擎生命周期：推理引擎为什么必须是子进程，rollout 大张量为什么不能当参数传，以及权重广播该怎么做。
+
+## 源码与仓库
+
+| 用途 | 链接 |
+| --- | --- |
+| 本系列配套练习（20 课脚本 + API 对账） | [MLsys-Note/Ray-Learn](https://github.com/ShaneGZhu/MLsys-Note/tree/main/Ray-Learn) |
+| Ray | [ray-project/ray](https://github.com/ray-project/ray) |
+| slime（最小编排） | [THUDM/slime](https://github.com/THUDM/slime) |
+| miles | [radixark/miles](https://github.com/radixark/miles) |
+| verl | [verl-project/verl](https://github.com/verl-project/verl) |
+| NeMo-RL | [NVIDIA/NeMo-RL](https://github.com/NVIDIA/NeMo-RL) |
+| AReaL | [areal-project/AReaL](https://github.com/areal-project/AReaL) |
+| prime-rl | [PrimeIntellect-ai/prime-rl](https://github.com/PrimeIntellect-ai/prime-rl) |

@@ -137,12 +137,12 @@ readingMinutes: 14
 
 | 想读懂… | 先读 | 对应篇 |
 | --- | --- | --- |
-| 最小编排 | `slime/slime/ray/` 1,228 行 | 一 / 二 / 三 |
-| 声明式分发 | `verl/single_controller/{base,ray}/` | 四 |
-| 教科书分层 | `NeMo-RL/nemo_rl/distributed/` | 一 / 五 |
-| 薄 Ray 服务化 | `AReaL/areal/infra/{launcher,scheduler}/` | 五 |
-| 无 Ray 对照 | `prime-rl/src/prime_rl/orchestrator/` | 四 |
-| 数据面 | `TransferQueue/transfer_queue/` | 三 |
+| 最小编排 | [slime](https://github.com/THUDM/slime)/`slime/ray/` 1,228 行 | 一 / 二 / 三 |
+| 声明式分发 | [verl](https://github.com/verl-project/verl)/`verl/single_controller/{base,ray}/` | 四 |
+| 教科书分层 | [NeMo-RL](https://github.com/NVIDIA/NeMo-RL)/`nemo_rl/distributed/` | 一 / 五 |
+| 薄 Ray 服务化 | [AReaL](https://github.com/areal-project/AReaL)/`areal/infra/{launcher,scheduler}/` | 五 |
+| 无 Ray 对照 | [prime-rl](https://github.com/PrimeIntellect-ai/prime-rl)/`src/prime_rl/orchestrator/` | 四 |
+| 数据面 | TransferQueue / `transfer_queue/` | 三 |
 
 ### slime 推荐阅读序
 
@@ -174,4 +174,17 @@ ray.serve   ray.train   ray.data   ray.tune   RLlib   ActorPool   Compiled Ray D
 | [五](/blog/posts/rlinfra-with-ray-05-multinode-concurrency-process/) | 多机角色、并发池、进程监督 |
 | 本篇 | API 对账与源码地图 |
 
-配套练习仓库仍保留 20 课可运行脚本与完整实验记录格式；本附录适合当读源码时的速查表。
+配套练习仓库 [MLsys-Note/Ray-Learn](https://github.com/ShaneGZhu/MLsys-Note/tree/main/Ray-Learn) 保留 20 课可运行脚本与完整实验记录格式；本附录适合当读源码时的速查表。
+
+## 源码与仓库
+
+| 用途 | 链接 |
+| --- | --- |
+| 本系列配套练习（20 课脚本 + API 对账） | [MLsys-Note/Ray-Learn](https://github.com/ShaneGZhu/MLsys-Note/tree/main/Ray-Learn) |
+| Ray | [ray-project/ray](https://github.com/ray-project/ray) |
+| slime（最小编排） | [THUDM/slime](https://github.com/THUDM/slime) |
+| miles | [radixark/miles](https://github.com/radixark/miles) |
+| verl | [verl-project/verl](https://github.com/verl-project/verl) |
+| NeMo-RL | [NVIDIA/NeMo-RL](https://github.com/NVIDIA/NeMo-RL) |
+| AReaL | [areal-project/AReaL](https://github.com/areal-project/AReaL) |
+| prime-rl | [PrimeIntellect-ai/prime-rl](https://github.com/PrimeIntellect-ai/prime-rl) |

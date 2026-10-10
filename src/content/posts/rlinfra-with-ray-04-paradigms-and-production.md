@@ -224,3 +224,16 @@ ray.serve   ray.train   ray.data   ray.tune   RLlib   ActorPool
 | [六](/blog/posts/rlinfra-with-ray-06-api-inventory/) | API 对账与源码地图 | 读框架时的速查表 |
 
 配套仓库 `Ray-Learn` 提供 20 课可运行脚本与 API 对账表。读源码可以从 slime 的 `slime/ray/` 开始——1,228 行，适合整个通读一遍；读完再看 verl 的 `single_controller/`，会更清楚「抽象贵在哪里」。
+
+## 源码与仓库
+
+| 用途 | 链接 |
+| --- | --- |
+| 本系列配套练习（20 课脚本 + API 对账） | [MLsys-Note/Ray-Learn](https://github.com/ShaneGZhu/MLsys-Note/tree/main/Ray-Learn) |
+| Ray | [ray-project/ray](https://github.com/ray-project/ray) |
+| slime（最小编排） | [THUDM/slime](https://github.com/THUDM/slime) |
+| miles | [radixark/miles](https://github.com/radixark/miles) |
+| verl | [verl-project/verl](https://github.com/verl-project/verl) |
+| NeMo-RL | [NVIDIA/NeMo-RL](https://github.com/NVIDIA/NeMo-RL) |
+| AReaL | [areal-project/AReaL](https://github.com/areal-project/AReaL) |
+| prime-rl | [PrimeIntellect-ai/prime-rl](https://github.com/PrimeIntellect-ai/prime-rl) |

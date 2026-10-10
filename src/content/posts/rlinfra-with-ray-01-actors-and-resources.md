@@ -15,7 +15,7 @@ readingMinutes: 18
 
 先说结论：RL 基础设施的控制面，今天大部分长在 Ray 上，但用到的只是 Ray Core 里很窄的一层。窄，不等于简单——坑全在语义里。
 
-这篇文章属于 **Ray-Learn** 系列。系列目标不是「学会 Ray」，而是**通过 Ray 读懂 RLinfra 的编排层**：资源怎么记、rank 怎么定、引擎怎么管、权重怎么同步。四篇读完，再去看 slime / verl / NeMo-RL / AReaL 的源码，会发现它们在解同一组问题，只是抽象层次不同。
+这篇文章属于 **Ray-Learn** 系列。系列目标不是「学会 Ray」，而是**通过 Ray 读懂 RLinfra 的编排层**：资源怎么记、rank 怎么定、引擎怎么管、权重怎么同步。系列读完，再去看 slime / verl / NeMo-RL / AReaL 的源码，会发现它们在解同一组问题，只是抽象层次不同。
 
 ## 一、先分清 task 和 actor
 
@@ -239,3 +239,16 @@ ray.shutdown()
 跑完再去看 slime 的 `slime/ray/actor_group.py` 和 NeMo-RL 的 `refit_watchdog.py`，很多设计选择会立刻变得具体：为什么 rollout 要独立成 actor，为什么 health check 不能和 refit 挤在一起，为什么 `num_gpus` 可以是 0.4。
 
 下一篇讲 placement group：资源从「几张卡」推进到「卡落在哪」，以及为什么 bundle 顺序不稳定是一个正确性问题。
+
+## 源码与仓库
+
+| 用途 | 链接 |
+| --- | --- |
+| 本系列配套练习（20 课脚本 + API 对账） | [MLsys-Note/Ray-Learn](https://github.com/ShaneGZhu/MLsys-Note/tree/main/Ray-Learn) |
+| Ray | [ray-project/ray](https://github.com/ray-project/ray) |
+| slime（最小编排） | [THUDM/slime](https://github.com/THUDM/slime) |
+| miles | [radixark/miles](https://github.com/radixark/miles) |
+| verl | [verl-project/verl](https://github.com/verl-project/verl) |
+| NeMo-RL | [NVIDIA/NeMo-RL](https://github.com/NVIDIA/NeMo-RL) |
+| AReaL | [areal-project/AReaL](https://github.com/areal-project/AReaL) |
+| prime-rl | [PrimeIntellect-ai/prime-rl](https://github.com/PrimeIntellect-ai/prime-rl) |

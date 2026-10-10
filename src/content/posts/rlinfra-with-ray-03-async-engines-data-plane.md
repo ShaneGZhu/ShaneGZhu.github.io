@@ -301,3 +301,16 @@ slime 另外有一个 24 行的 `Lock` actor：权重广播与生成不能并发
 | 权重 | 版本屏障；广播顺序确定；与生成互斥 |
 
 下一篇收尾，讨论：runtime_env 的覆盖顺序、具名服务与拓扑调度，以及五种编排范式——从 slime 的 1,228 行，到 AReaL 的两万五千行，中间的取舍就是 RLinfra 的设计空间。
+
+## 源码与仓库
+
+| 用途 | 链接 |
+| --- | --- |
+| 本系列配套练习（20 课脚本 + API 对账） | [MLsys-Note/Ray-Learn](https://github.com/ShaneGZhu/MLsys-Note/tree/main/Ray-Learn) |
+| Ray | [ray-project/ray](https://github.com/ray-project/ray) |
+| slime（最小编排） | [THUDM/slime](https://github.com/THUDM/slime) |
+| miles | [radixark/miles](https://github.com/radixark/miles) |
+| verl | [verl-project/verl](https://github.com/verl-project/verl) |
+| NeMo-RL | [NVIDIA/NeMo-RL](https://github.com/NVIDIA/NeMo-RL) |
+| AReaL | [areal-project/AReaL](https://github.com/areal-project/AReaL) |
+| prime-rl | [PrimeIntellect-ai/prime-rl](https://github.com/PrimeIntellect-ai/prime-rl) |
