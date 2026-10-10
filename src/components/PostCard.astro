@@ -13,8 +13,8 @@ interface Props {
 }
 
 const { post, featured = false } = Astro.props;
-const { title, description, pubDate, tags, kind, lang, draft } = post.data;
-const minutes = readingTime(post.body);
+const { title, description, pubDate, tags, kind, lang, draft, readingMinutes } = post.data;
+const minutes = readingMinutes ?? readingTime(post.body);
 ---
 
 <article class:list={['post-card', featured && 'post-card--featured']}>
