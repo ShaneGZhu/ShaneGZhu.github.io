@@ -1,0 +1,11 @@
+title: 'GLM-5.2 RL weight transfer in 4 seconds using NIXL and ModelExpress'
+url: 'https://www.primeintellect.ai/blog/nixl-modelexpress-weight-transfer'
+author: 'Matej Sirovatka'
+sourcePublished: 2026-09-03
+added: 2026-10-09
+note: >-
+  A concrete answer to the weight-sync bottleneck in large-scale RL: why NCCL’s
+  static process groups block elastic inference, and how a NIXL pull path plus
+  traced vLLM load_layouts gets GLM-5.2 from 86s to under 4s. Worth reading for
+  the lower-bound bandwidth math and the pause-consensus detail alone.
+tags: ['RL', 'Inference']
