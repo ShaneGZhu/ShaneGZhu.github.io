@@ -280,11 +280,16 @@
 }
 
 .prose table {
-  /* `min-content` lets a wide table exceed the wrapper and scroll inside it. */
-  width: max(100%, min-content);
+  /*
+   * Fill the wrapper. `max(100%, min-content)` collapsed to min-content on
+   * two-column tables, leaving a blank strip on the right; 100% keeps the
+   * grid edge-to-edge and the wrapper still scrolls when a cell cannot wrap.
+   */
+  width: 100%;
   border-collapse: collapse;
   font-size: var(--step--1);
   line-height: 1.6;
+  table-layout: auto;
 }
 
 .prose :is(th, td) {
