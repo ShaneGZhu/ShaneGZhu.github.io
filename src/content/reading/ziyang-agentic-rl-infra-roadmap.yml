@@ -1,0 +1,12 @@
+title: 'Agentic RL Infra 主流技术路线综述'
+url: 'https://weiziyang.wiki/posts/post-training-rl/agentic-rl-infra-technical-roadmap-overview'
+author: '韦子扬'
+sourcePublished: 2026-10-07
+added: 2026-10-10
+note: >-
+  A synthesis of eleven 2025–2026 public reports on agentic RL infrastructure,
+  organised around the throughput / off-policy trade-off rather than model
+  names. Colocated vs disaggregated serving, staleness control, train–inference
+  mismatch correction, and credit assignment are compared side by side — the
+  rare survey that still points at unresolved engineering problems.
+tags: ['RL']
