@@ -2,6 +2,8 @@ import { defineCollection } from 'astro:content';
 import { z } from 'astro/zod';
 import { glob } from 'astro/loaders';
 
+import { collapseCjkSpaces } from './markdown/cjk.mjs';
+
 /**
  * The controlled vocabulary for subject tags.
  *
@@ -30,7 +32,12 @@ const posts = defineCollection({
   schema: ({ image }) =>
     z.object({
       title: z.string(),
-      description: z.string(),
+      /**
+       * A folded YAML scalar turns wrap points into spaces, which is wrong between
+       * two Chinese characters; the schema fixes that where the data enters, so
+       * listings and previews read correctly without the author fighting YAML.
+       */
+      description: z.string().transform(collapseCjkSpaces),
       pubDate: z.coerce.date(),
       updatedDate: z.coerce.date().optional(),
       /** Subject tags, from the controlled list. */
@@ -79,7 +86,7 @@ const reading = defineCollection({
     /** When I collected it — the sort order for the page. */
     added: z.coerce.date(),
     /** One or two sentences in my own words. */
-    note: z.string(),
+    note: z.string().transform(collapseCjkSpaces),
     /** Subject tags, from the same controlled list as posts. */
     tags: z.array(z.enum(TOPICS)).default([]),
   }),

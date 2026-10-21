@@ -9,6 +9,9 @@ const CJK =
 
 const BETWEEN_CJK = new RegExp(`([${CJK}])[ \\t]*\\n[ \\t]*([${CJK}])`, 'g');
 
+/** Whitespace *within a line* between two CJK characters, as folded YAML produces. */
+const SPACE_BETWEEN_CJK = new RegExp(`([${CJK}])[ \\t]+([${CJK}])`, 'g');
+
 /**
  * Removes the stray space a source line break leaves between two CJK characters.
  *
@@ -41,3 +44,29 @@ export const cjkLineBreakPlugin = {
     return { ...node, value: next };
   },
 };
+
+/**
+ * Removes whitespace that sits between two CJK characters.
+ *
+ * Frontmatter is not Markdown: a folded YAML scalar (`>-`) turns every wrap point
+ * into a single space, so a Chinese `description` written across several lines
+ * picks up gaps mid-sentence — "数值 一致性" — that show up in listings and link
+ * previews. This is the frontmatter counterpart of the plugin above, applied
+ * through the content schema.
+ *
+ * Spaces between CJK and Latin are kept, since a mixed-language description needs
+ * them.
+ *
+ * @param {string} value
+ * @returns {string}
+ */
+export function collapseCjkSpaces(value) {
+  let next = value;
+  // Overlapping matches (`一 二 三`) need more than one pass.
+  for (let i = 0; i < 8; i += 1) {
+    const collapsed = next.replace(SPACE_BETWEEN_CJK, '$1$2');
+    if (collapsed === next) break;
+    next = collapsed;
+  }
+  return next;
+}
