@@ -41,8 +41,31 @@ export const katexPlugin = {
  */
 function wrap(html, ctx) {
   return ctx.sourceFormat === 'mdx'
-    ? { raw: html, mdxExpressions: false }
+    ? { raw: escapeForMdx(html), mdxExpressions: false }
     : { type: 'html', value: html };
+}
+
+/**
+ * Makes KaTeX markup safe to hand to the MDX compiler as `raw` Markdown.
+ *
+ * The `raw` path re-parses the string as Markdown, and KaTeX output carries the
+ * TeX source verbatim in its MathML `<annotation>`. Two things go wrong there:
+ *
+ * - Braces are read as JSX expressions despite `mdxExpressions: false`, so
+ *   `\left\{x: y_{b}\right\}` fails the build with "Unexpected content after
+ *   expression".
+ * - Markdown syntax inside the text is live: `\{` is a backslash escape, so the
+ *   backslash disappears from the annotation, and `^`, `$` or `*` could turn into
+ *   superscript, math or emphasis.
+ *
+ * Encoding those characters as numeric character references sidesteps both. A
+ * reference is decoded back to the same character in text and attribute values,
+ * so the rendered page and the copy-pasteable TeX are unchanged.
+ *
+ * @param {string} html
+ */
+function escapeForMdx(html) {
+  return html.replace(/[{}\\*_^~`$\[\]]/g, (ch) => `&#${ch.charCodeAt(0)};`);
 }
 
 function render(source, displayMode) {
