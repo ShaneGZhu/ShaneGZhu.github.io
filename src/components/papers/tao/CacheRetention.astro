@@ -1,0 +1,166 @@
+---
+/**
+ * Figure 3 of the TAO paper, redrawn: observed cache retention against pause
+ * age, with the scheduler's credit decay overlaid.
+ *
+ * The measured series (binned medians, their 95% intervals, the descriptive
+ * fit) were extracted from the paper's own figure SVG, so the points sit where
+ * the paper puts them. The decay curve is the paper's Equation 4,
+ * 100 · 2^(−τ/h), and the slider changes h. The curve is drawn on the server
+ * for h = 10 s, the paper's value, so the figure is complete without scripts.
+ */
+import '../../../styles/charts.css';
+import data from './data/cache-retention.json';
+
+const W = 720;
+const H = 300;
+const pad = { l: 46, r: 16, t: 14, b: 42 };
+const pw = W - pad.l - pad.r;
+const ph = H - pad.t - pad.b;
+
+// Log x axis from 2 s to 1 800 s; the paper's populated bins span this range.
+const LOG_MIN = Math.log10(2);
+const LOG_MAX = Math.log10(1800);
+const x = (s: number) => pad.l + ((Math.log10(Math.max(s, 2)) - LOG_MIN) / (LOG_MAX - LOG_MIN)) * pw;
+const y = (pct: number) => pad.t + ph - (pct / 100) * ph;
+
+const fitPath = data.fit
+  .filter(([s]) => s >= 2)
+  .map(([s, p], i) => `${i === 0 ? 'M' : 'L'}${x(s).toFixed(1)} ${y(p).toFixed(1)}`)
+  .join(' ');
+
+/** Sampled on the same log grid the client uses, so both draw the same shape. */
+function decayPath(halfLife: number): string {
+  const steps = 120;
+  let d = '';
+  for (let i = 0; i <= steps; i += 1) {
+    const s = 10 ** (LOG_MIN + ((LOG_MAX - LOG_MIN) * i) / steps);
+    const pct = 100 * 2 ** (-s / halfLife);
+    d += `${i === 0 ? 'M' : 'L'}${x(s).toFixed(1)} ${y(pct).toFixed(1)} `;
+  }
+  return d.trim();
+}
+
+const xTicks = [
+  { s: 10, label: '10 s' },
+  { s: 100, label: '100 s' },
+  { s: 1000, label: '1 000 s' },
+];
+const minorTicks = [2, 3, 4, 5, 6, 7, 8, 9, 20, 30, 40, 50, 60, 70, 80, 90, 200, 300, 400, 500, 600, 700, 800, 900];
+const yTicks = [0, 25, 50, 75, 100];
+
+// Passed to the client as attributes so the script needs no second copy of the
+// axis maths.
+const geometry = JSON.stringify({ W, H, pad, LOG_MIN, LOG_MAX });
+---
+
+<figure class="chart" data-cache-retention data-geometry={geometry}>
+  <figcaption class="chart__title">图 3 复现：暂停时长与缓存保留率（DeepSeek-V4 Flash，2 节点 × 4 H100）</figcaption>
+
+  <div class="chart__scroll">
+    <svg
+      class="chart__svg"
+      viewBox={`0 0 ${W} ${H}`}
+      role="img"
+      aria-labelledby="cache-retention-desc"
+    >
+      <desc id="cache-retention-desc">
+        暂停 4 到 44 秒时，缓存保留率的分箱中位数在 91% 到 99% 之间；暂停 87 秒及以上时中位数降到 0。
+        叠加的调度信用曲线按 100 × 2^(−τ/h) 衰减，默认半衰期 h = 10 秒。
+      </desc>
+
+      {yTicks.map((p) => (
+        <g>
+          <line class="chart-grid" x1={pad.l} x2={pad.l + pw} y1={y(p)} y2={y(p)} />
+          <text x={pad.l - 8} y={y(p) + 4} text-anchor="end">{p}%</text>
+        </g>
+      ))}
+      {minorTicks.map((s) => (
+        <line class="chart-axis" x1={x(s)} x2={x(s)} y1={pad.t + ph} y2={pad.t + ph + 3} />
+      ))}
+      {xTicks.map((t) => (
+        <g>
+          <line class="chart-grid" x1={x(t.s)} x2={x(t.s)} y1={pad.t} y2={pad.t + ph} />
+          <line class="chart-axis" x1={x(t.s)} x2={x(t.s)} y1={pad.t + ph} y2={pad.t + ph + 6} />
+          <text x={x(t.s)} y={pad.t + ph + 19} text-anchor="middle">{t.label}</text>
+        </g>
+      ))}
+      <line class="chart-axis" x1={pad.l} x2={pad.l + pw} y1={pad.t + ph} y2={pad.t + ph} />
+      <text x={pad.l + pw / 2} y={H - 4} text-anchor="middle">下一次请求前的暂停时长（对数轴）</text>
+
+      <path d={fitPath} fill="none" stroke="var(--chart-2)" stroke-width="2" />
+
+      {data.bins.map((b) => (
+        <g>
+          <line
+            x1={x(b.s)} x2={x(b.s)} y1={y(b.low)} y2={y(b.high)}
+            stroke="var(--chart-1)" stroke-width="1.4"
+          />
+          <line x1={x(b.s) - 4} x2={x(b.s) + 4} y1={y(b.low)} y2={y(b.low)} stroke="var(--chart-1)" stroke-width="1.4" />
+          <line x1={x(b.s) - 4} x2={x(b.s) + 4} y1={y(b.high)} y2={y(b.high)} stroke="var(--chart-1)" stroke-width="1.4" />
+          <circle cx={x(b.s)} cy={y(b.med)} r="4" fill="var(--chart-1)" />
+        </g>
+      ))}
+
+      <path
+        data-decay
+        d={decayPath(10)}
+        fill="none"
+        stroke="var(--chart-4)"
+        stroke-width="2.2"
+        stroke-dasharray="6 4"
+      />
+    </svg>
+  </div>
+
+  <div class="chart__controls">
+    <span><span class="chart-swatch" style="color: var(--chart-1)"></span> 分箱中位数（95% 区间）</span>
+    <span><span class="chart-swatch" style="color: var(--chart-2)"></span> 论文的描述性拟合</span>
+    <span><span class="chart-swatch" style="color: var(--chart-4)"></span> 调度信用 2<sup>−τ/h</sup></span>
+  </div>
+
+  <div class="chart__controls" data-slider hidden>
+    <label for="half-life">半衰期 h</label>
+    <input id="half-life" type="range" min="2" max="60" step="1" value="10" />
+    <output for="half-life" data-half-life-value>10 s（论文取值）</output>
+  </div>
+
+  <p class="chart__caption">
+    数据点按论文原图的矢量坐标还原。拖动滑块只改变调度器的折算曲线，不改变实测数据。
+  </p>
+</figure>
+
+<script>
+  /*
+   * Redraws only the decay curve; the measured series are static SVG. Without
+   * this script the slider stays hidden and the figure shows h = 10 s.
+   */
+  for (const fig of document.querySelectorAll<HTMLElement>('[data-cache-retention]')) {
+    const g = JSON.parse(fig.dataset.geometry ?? '{}');
+    const path = fig.querySelector<SVGPathElement>('[data-decay]');
+    const slider = fig.querySelector<HTMLInputElement>('input[type="range"]');
+    const value = fig.querySelector<HTMLOutputElement>('[data-half-life-value]');
+    const controls = fig.querySelector<HTMLElement>('[data-slider]');
+    if (!path || !slider || !value || !controls) continue;
+
+    const pw = g.W - g.pad.l - g.pad.r;
+    const ph = g.H - g.pad.t - g.pad.b;
+    const x = (s: number) =>
+      g.pad.l + ((Math.log10(Math.max(s, 2)) - g.LOG_MIN) / (g.LOG_MAX - g.LOG_MIN)) * pw;
+    const y = (pct: number) => g.pad.t + ph - (pct / 100) * ph;
+
+    const draw = () => {
+      const h = Number(slider.value);
+      let d = '';
+      for (let i = 0; i <= 120; i += 1) {
+        const s = 10 ** (g.LOG_MIN + ((g.LOG_MAX - g.LOG_MIN) * i) / 120);
+        d += `${i === 0 ? 'M' : 'L'}${x(s).toFixed(1)} ${y(100 * 2 ** (-s / h)).toFixed(1)} `;
+      }
+      path.setAttribute('d', d.trim());
+      value.textContent = h === 10 ? '10 s（论文取值）' : `${h} s`;
+    };
+
+    slider.addEventListener('input', draw);
+    controls.hidden = false;
+  }
+</script>

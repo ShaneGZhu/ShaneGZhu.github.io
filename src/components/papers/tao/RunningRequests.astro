@@ -1,0 +1,112 @@
+---
+/**
+ * Figure 4 of the TAO paper, redrawn: running requests over time for GLM-4.7
+ * on SWE-Lite at 160 workers (TP8, 300 tasks per run).
+ *
+ * The five traces were extracted from the paper's figure SVG and simplified
+ * (Ramer–Douglas–Peucker, about one request of tolerance), which keeps spikes
+ * such as ThunderAgent's jump near 1 970 s. Completion times in the legend are
+ * the paper's own labels.
+ *
+ * Legend entries become toggle buttons once the script runs; before that they
+ * are plain labels and all five traces are drawn.
+ */
+import '../../../styles/charts.css';
+import traces from './data/glm-traces.json';
+
+const series = [
+  { key: 'TAO', label: 'TAO', minutes: 60.0, color: '--chart-1', width: 2.6, dash: undefined },
+  { key: 'ThunderAgent', label: 'ThunderAgent', minutes: 70.9, color: '--chart-2', width: 2, dash: undefined },
+  { key: 'vLLM w/ CA', label: 'vLLM w/ CA', minutes: 164.3, color: '--chart-4', width: 1.5, dash: '5 3' },
+  { key: 'vLLM w/ RR', label: 'vLLM w/ RR', minutes: 176.8, color: '--chart-3', width: 1.5, dash: '5 3' },
+  { key: 'Dynamo', label: 'Dynamo', minutes: 189.4, color: '--chart-5', width: 1.5, dash: '2 3' },
+] as const;
+
+const W = 720;
+const H = 300;
+const pad = { l: 40, r: 14, t: 12, b: 40 };
+const pw = W - pad.l - pad.r;
+const ph = H - pad.t - pad.b;
+const T_MAX = 11400;
+const R_MAX = 160;
+const x = (t: number) => pad.l + (t / T_MAX) * pw;
+const y = (r: number) => pad.t + ph - (r / R_MAX) * ph;
+
+const pathOf = (pts: number[][]) =>
+  pts.map(([t, r], i) => `${i === 0 ? 'M' : 'L'}${x(t!).toFixed(1)} ${y(r!).toFixed(1)}`).join(' ');
+
+const data = traces as Record<string, number[][]>;
+const xTicks = [0, 1800, 3600, 5400, 7200, 9000, 10800];
+const yTicks = [0, 40, 80, 120, 160];
+const fmtTime = (s: number) => (s === 0 ? '0' : `${s / 60} min`);
+---
+
+<figure class="chart" data-traces>
+  <figcaption class="chart__title">图 4 复现：运行中请求数随时间变化（GLM-4.7，SWE-Lite，160 workers，TP8）</figcaption>
+  <div class="chart__scroll">
+    <svg class="chart__svg" viewBox={`0 0 ${W} ${H}`} role="img" aria-labelledby="traces-desc">
+      <desc id="traces-desc">
+        五个调度器都从约 158 个运行中请求开始。TAO 在 60.0 分钟跑完 300 个任务，中段并发保持在约 40 到 75 之间；
+        ThunderAgent 在 70.9 分钟跑完，约 1970 秒处从 28 跳到 122；vLLM w/ CA、vLLM w/ RR 与 Dynamo 分别在
+        164.3、176.8 和 189.4 分钟跑完。
+      </desc>
+      {yTicks.map((r) => (
+        <g>
+          <line class="chart-grid" x1={pad.l} x2={pad.l + pw} y1={y(r)} y2={y(r)} />
+          <text x={pad.l - 8} y={y(r) + 4} text-anchor="end">{r}</text>
+        </g>
+      ))}
+      {xTicks.map((t) => (
+        <g>
+          <line class="chart-axis" x1={x(t)} x2={x(t)} y1={pad.t + ph} y2={pad.t + ph + 5} />
+          <text x={x(t)} y={pad.t + ph + 18} text-anchor="middle">{fmtTime(t)}</text>
+        </g>
+      ))}
+      <line class="chart-axis" x1={pad.l} x2={pad.l + pw} y1={pad.t + ph} y2={pad.t + ph} />
+      <text x={pad.l + pw / 2} y={H - 3} text-anchor="middle">距该次运行第一个客户端请求的时间</text>
+      {
+        [...series].reverse().map((s) => (
+          <path
+            data-series={s.key}
+            d={pathOf(data[s.key] ?? [])}
+            fill="none"
+            stroke={`var(${s.color})`}
+            stroke-width={s.width}
+            stroke-dasharray={s.dash}
+            stroke-linejoin="round"
+          />
+        ))
+      }
+    </svg>
+  </div>
+  <div class="chart__controls" data-legend>
+    {
+      series.map((s) => (
+        <button class="chart-toggle" type="button" data-toggle={s.key} aria-pressed="true" disabled>
+          <span class="chart-swatch" style={`color: var(${s.color})`}></span>
+          {s.label}（{s.minutes.toFixed(1)} min）
+        </button>
+      ))
+    }
+  </div>
+  <p class="chart__caption">
+    曲线从论文原图的矢量路径提取后做了简化（容差约 1 个请求）。完成时间取自原图图例。<span data-hint hidden>点击图例可隐藏或显示对应曲线。</span>
+  </p>
+</figure>
+
+<script>
+  for (const fig of document.querySelectorAll<HTMLElement>('[data-traces]')) {
+    const toggles = fig.querySelectorAll<HTMLButtonElement>('[data-toggle]');
+    for (const btn of toggles) {
+      const path = fig.querySelector<SVGPathElement>(`[data-series="${btn.dataset.toggle}"]`);
+      if (!path) continue;
+      btn.disabled = false;
+      btn.addEventListener('click', () => {
+        const on = btn.getAttribute('aria-pressed') !== 'true';
+        btn.setAttribute('aria-pressed', String(on));
+        path.style.display = on ? '' : 'none';
+      });
+    }
+    fig.querySelector<HTMLElement>('[data-hint]')?.removeAttribute('hidden');
+  }
+</script>

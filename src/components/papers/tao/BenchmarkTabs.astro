@@ -1,0 +1,195 @@
+---
+/**
+ * Tables 1 and 2 of the TAO paper, one tab per model and benchmark.
+ *
+ * Values are copied from the paper's tables. Every suite is rendered as a
+ * visible table on the server, so without JavaScript the reader gets all six
+ * one after another; the tab script then shows one at a time.
+ *
+ * "Best" is marked per column the way the paper bolds it: lowest latency and
+ * TTFT, highest decode throughput.
+ */
+import '../../../styles/charts.css';
+import data from './data/benchmarks.json';
+
+type Suite = {
+  model: string;
+  bench: string;
+  workers: number[];
+  rows: { method: string; values: number[] }[];
+  rel: number[];
+};
+
+const suites = Object.entries(data as Record<string, Suite>);
+
+const shortModel = (m: string) =>
+  m.startsWith('DeepSeek') ? 'DeepSeek-V4 Flash' : m.startsWith('Qwen') ? 'Qwen3-32B' : 'GLM-4.7';
+
+const metrics = [
+  { label: 'Latency (s)', better: 'low' },
+  { label: 'TTFT (s)', better: 'low' },
+  { label: 'Decode (tok/s)', better: 'high' },
+] as const;
+
+function bestIndex(rows: Suite['rows'], col: number) {
+  const better = metrics[col % 3]!.better;
+  let best = 0;
+  rows.forEach((r, i) => {
+    const v = r.values[col]!;
+    const b = rows[best]!.values[col]!;
+    if (better === 'low' ? v < b : v > b) best = i;
+  });
+  return best;
+}
+
+const fmt = (v: number) => (v >= 100 ? v.toFixed(1) : v.toFixed(3));
+const fmtRel = (v: number) => `${v > 0 ? '+' : ''}${v.toFixed(1)}%`;
+---
+
+<div class="bench" data-tabs>
+  <div class="bench__tabs" role="tablist" aria-label="模型与基准" hidden>
+    {
+      suites.map(([key, s]) => (
+        <button class="chart-toggle" type="button" role="tab" id={`bench-tab-${key}`} aria-controls={`bench-${key}`}>
+          {shortModel(s.model)} · {s.bench}
+        </button>
+      ))
+    }
+  </div>
+
+  {
+    suites.map(([key, s]) => (
+      <section id={`bench-${key}`} class="bench__panel" data-tab-panel>
+        <p class="bench__caption">
+          <strong>{shortModel(s.model)} · {s.bench}</strong>
+          <span>{s.model.replace(/^[^,]+,\s*/, '')}</span>
+        </p>
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th rowspan="2" scope="col">调度器</th>
+                {s.workers.map((w) => (
+                  <th colspan="3" scope="colgroup" class="bench__group">{w} workers</th>
+                ))}
+              </tr>
+              <tr>
+                {s.workers.map(() =>
+                  metrics.map((m) => (
+                    <th scope="col" class="bench__num">
+                      {m.label} {m.better === 'low' ? '↓' : '↑'}
+                    </th>
+                  )),
+                )}
+              </tr>
+            </thead>
+            <tbody>
+              {s.rows.map((r, i) => (
+                <tr class={r.method.startsWith('TAO') ? 'bench__ours' : undefined}>
+                  <th scope="row">{r.method}</th>
+                  {r.values.map((v, col) => (
+                    <td class="bench__num">
+                      {bestIndex(s.rows, col) === i ? <strong>{fmt(v)}</strong> : fmt(v)}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+              <tr class="bench__rel">
+                <th scope="row">相对最优基线</th>
+                {s.rel.map((v) => (
+                  <td class:list={['bench__num', v < 0 && 'bench__neg']}>{fmtRel(v)}</td>
+                ))}
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    ))
+  }
+</div>
+
+<script>
+  import { initAllTabs } from '../../../scripts/tabs';
+  initAllTabs();
+</script>
+
+<style>
+  .bench {
+    margin-block: var(--space-lg);
+  }
+
+  .bench__tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2xs) var(--space-xs);
+  }
+
+  .bench__tabs [aria-selected='true'] {
+    color: var(--text);
+    border-color: var(--text-muted);
+    background-color: var(--bg-subtle);
+    font-weight: 620;
+  }
+
+  .bench__panel + .bench__panel {
+    margin-top: var(--space-md);
+  }
+
+  .bench__panel:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 4px;
+    border-radius: var(--radius-sm);
+  }
+
+  .bench__caption {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 var(--space-xs);
+    margin-top: var(--space-sm);
+    font-size: var(--step--1);
+    color: var(--text-muted);
+  }
+
+  .bench__caption strong {
+    color: var(--text);
+  }
+
+  /* The tab block owns its spacing; the prose rule would double it. */
+  .bench :global(.table-wrapper) {
+    margin-block: var(--space-xs) 0;
+  }
+
+  .bench :global(table) {
+    font-variant-numeric: tabular-nums;
+  }
+
+  .bench__num {
+    text-align: right !important;
+    white-space: nowrap;
+  }
+
+  .bench__group {
+    text-align: center !important;
+    border-left: 1px solid var(--border);
+  }
+
+  .bench tbody th {
+    font-weight: 500;
+    white-space: nowrap;
+    background: none;
+  }
+
+  .bench__ours th,
+  .bench__ours td {
+    background-color: var(--accent-soft);
+  }
+
+  .bench__rel :is(th, td) {
+    color: var(--text-muted);
+    font-size: 0.95em;
+  }
+
+  .bench__neg {
+    color: var(--chart-5) !important;
+  }
+</style>

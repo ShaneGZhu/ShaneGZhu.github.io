@@ -1,0 +1,178 @@
+/*
+ * Data figures drawn as inline SVG inside a post.
+ *
+ * Charts use SVG rather than <canvas> so they follow the theme through CSS
+ * variables, stay sharp at any pixel density without resize handlers, and keep
+ * their text selectable. Every value a chart encodes is also given in nearby
+ * text or a table, so the drawing is never the only place a number lives.
+ *
+ * Class names are generic (`chart-*`) so later paper notes can reuse them.
+ */
+
+:root {
+  /* Categorical series. Each clears 3:1 against --bg-raised in its theme. */
+  --chart-1: #2160c4;
+  --chart-2: #a85f00;
+  --chart-3: #7446ad;
+  --chart-4: #1d7a64;
+  --chart-5: #b2364f;
+  --chart-6: #4d6b00;
+  --chart-7: #8a4b2a;
+  --chart-grid: #ebeae4;
+  --chart-axis: var(--text-faint);
+}
+
+[data-theme='dark'] {
+  --chart-1: #6ea6ff;
+  --chart-2: #e3a24c;
+  --chart-3: #b994ea;
+  --chart-4: #4fc1a4;
+  --chart-5: #ee8399;
+  --chart-6: #a9cf5b;
+  --chart-7: #d9a07c;
+  --chart-grid: #2a2a30;
+}
+
+.prose .chart {
+  margin-block: var(--space-lg);
+  width: calc(100% + var(--bleed) * 2);
+  margin-inline: calc(var(--bleed) * -1);
+  padding: var(--space-sm) var(--space-sm) var(--space-xs);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background-color: var(--bg-raised);
+}
+
+.prose--dense .chart {
+  margin-block: calc(var(--space-md) * 0.9);
+}
+
+.chart__title {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: var(--step--1);
+  font-weight: 620;
+  color: var(--text);
+}
+
+/* A drawing wider than a phone scrolls inside its frame instead of shrinking
+   its labels to an unreadable size. */
+.chart__scroll {
+  margin-top: var(--space-xs);
+  overflow-x: auto;
+}
+
+.chart__svg {
+  display: block;
+  width: 100%;
+  min-width: 36rem;
+  height: auto;
+  font-family: var(--font-sans);
+  overflow: visible;
+}
+
+.chart__svg text {
+  fill: var(--text-muted);
+  font-size: 11px;
+}
+
+.chart__svg .chart-label--strong {
+  fill: var(--text);
+  font-weight: 620;
+}
+
+.chart__svg .chart-grid {
+  stroke: var(--chart-grid);
+  stroke-width: 1;
+}
+
+.chart__svg .chart-axis {
+  stroke: var(--chart-axis);
+  stroke-width: 1;
+}
+
+/* Text set on top of coloured bars: a halo in the card colour keeps it legible
+   over any fill in either theme. */
+.chart__svg .chart-halo {
+  paint-order: stroke;
+  stroke: var(--bg-raised);
+  stroke-width: 3px;
+  stroke-linejoin: round;
+}
+
+.chart__controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-xs) var(--space-sm);
+  margin-top: var(--space-xs);
+  font-size: var(--step--1);
+  color: var(--text-muted);
+}
+
+.chart__controls[hidden] {
+  display: none;
+}
+
+.chart-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
+  padding: 0.25em 0.7em;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--text-muted);
+  font: inherit;
+  font-size: var(--step--1);
+  line-height: 1.5;
+  cursor: pointer;
+  transition: color var(--transition), border-color var(--transition),
+    background-color var(--transition);
+}
+
+.chart-toggle:hover {
+  color: var(--text);
+  border-color: var(--border-strong);
+}
+
+.chart-toggle[aria-pressed='true'] {
+  color: var(--text);
+  border-color: var(--text-muted);
+  background-color: var(--bg-subtle);
+  font-weight: 620;
+}
+
+/* Before scripts run a toggle is only a legend entry, so it must not look or
+   behave like a control. */
+.chart-toggle:disabled {
+  cursor: default;
+  border-color: transparent;
+  padding-inline: 0.2em;
+}
+
+.chart-swatch {
+  display: inline-block;
+  width: 0.9em;
+  height: 0.22em;
+  border-radius: 1px;
+  background-color: currentColor;
+}
+
+.chart__caption {
+  margin-top: var(--space-xs);
+  font-size: var(--step--1);
+  line-height: 1.6;
+  color: var(--text-faint);
+}
+
+.chart input[type='range'] {
+  width: min(16rem, 100%);
+  accent-color: var(--accent);
+}
+
+.chart output {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  color: var(--text);
+}

@@ -1,0 +1,178 @@
+---
+/**
+ * Figures 10 and 11 of the TAO paper, redrawn: one placement snapshot solved
+ * by a short-first affinity-greedy heuristic and by TAO's dynamic program.
+ *
+ * Block widths and cache-hit overlays were read from the paper's figure SVGs
+ * (bar geometry, then converted with the axis ticks), and the totals they add up
+ * to match the numbers in Appendix H: 13,624 vs 16,791 cache-credit tokens in
+ * Figure 10, 6 vs 7 sessions admitted in Figure 11.
+ */
+import '../../../styles/charts.css';
+import data from './data/placement.json';
+
+interface Props {
+  figure: 'fig10' | 'fig11';
+}
+
+const { figure } = Astro.props;
+const fig = data[figure];
+
+// Program ids keep one hue across both variants so a move between nodes is
+// visible. Seven hues cover the larger snapshot.
+const hues = ['--chart-1', '--chart-2', '--chart-3', '--chart-4', '--chart-5', '--chart-6', '--chart-7'];
+const ids = [
+  ...new Set(
+    fig.variants.flatMap((v) => [
+      ...Object.values(v.nodes).flat().map((b) => String(b[0])),
+      ...('deferred' in v ? (v.deferred as (string | number)[][]).map((b) => String(b[0])) : []),
+    ]),
+  ),
+];
+const hueOf = (id: string) => `var(${hues[ids.indexOf(id) % hues.length]})`;
+
+const W = 720;
+const labelW = 64;
+const right = 96; // room for the "limit / free" note after the limit line
+const pw = W - labelW - right;
+const k = (tokens: number) => (tokens / fig.scale) * pw;
+
+const rowH = 26;
+const rowGap = 16;
+// Tall enough for a narrow block's label, which sits above its bar.
+const titleH = 34;
+const variantGap = 18;
+
+type Row = { name: string; blocks: (string | number)[][]; limit?: number; deferred?: boolean };
+
+const variants = fig.variants.map((v) => {
+  const rows: Row[] = Object.entries(v.nodes).map(([name, blocks]) => ({
+    name,
+    blocks: blocks as (string | number)[][],
+    limit: (fig.limits as Record<string, number>)[name],
+  }));
+  if ('deferred' in v) rows.push({ name: '未准入', blocks: v.deferred as (string | number)[][], deferred: true });
+  return { ...v, rows };
+});
+
+let cursor = 0;
+const laidOut = variants.map((v) => {
+  const top = cursor;
+  cursor += titleH + v.rows.length * (rowH + rowGap) + variantGap;
+  return { ...v, top };
+});
+const axisTop = cursor - variantGap + 4;
+const H = axisTop + 42;
+
+const ticks = Array.from({ length: Math.floor(fig.scale / 10) + 1 }, (_, i) => i * 10);
+const fmt = (n: number) => n.toFixed(1);
+const title =
+  figure === 'fig10'
+    ? '图 10 复现：同一快照下的缓存信用（DeepSeek-V4 Flash，32 workers 回放）'
+    : '图 11 复现：同一快照下的准入数量（DeepSeek-V4 Flash，32 workers 回放）';
+const desc =
+  figure === 'fig10'
+    ? '贪心把 P89 与 P123 放进 Node 1，P109 与 P111 落到没有缓存的 Node 2，缓存信用合计 13,624；动态规划把 P109、P111 留在 Node 1，P89、P123 移到 Node 2，缓存信用合计 16,791，多 23.2%。'
+    : '贪心先把四个短会话塞进 Node 1，两节点剩余空间各约 14k 与 15k，放不下约 21k 的会话 177，只准入 6 个；动态规划把 195 和 193 移到 Node 2，在 Node 1 腾出整块空间，准入 7 个，包括会话 177。';
+---
+
+<figure class="chart">
+  <figcaption class="chart__title">{title}</figcaption>
+  <div class="chart__scroll">
+    <svg class="chart__svg" viewBox={`0 0 ${W} ${H}`} role="img" aria-label={desc}>
+      {
+        laidOut.map((v) => (
+          <g>
+            <text class="chart-label--strong" x={labelW} y={v.top + 14}>
+              {v.label}
+              <tspan dx="10" style="font-weight: 400">{v.summary}</tspan>
+            </text>
+            {v.rows.map((row, r) => {
+              const y0 = v.top + titleH + r * (rowH + rowGap);
+              let at = labelW;
+              const used = row.blocks.reduce((s, b) => s + Number(b[1]), 0);
+              return (
+                <g>
+                  <text x={labelW - 10} y={y0 + rowH / 2 + 4} text-anchor="end">{row.name}</text>
+                  {row.limit !== undefined && (
+                    <rect x={labelW} y={y0} width={k(row.limit)} height={rowH} fill="var(--bg-subtle)" rx="3" />
+                  )}
+                  {row.blocks.map((b) => {
+                    const [id, w, hit] = [String(b[0]), Number(b[1]), Number(b[2])];
+                    const x0 = at;
+                    at += k(w);
+                    const narrow = k(w) < 34;
+                    return (
+                      <g>
+                        <rect
+                          x={x0} y={y0} width={k(w)} height={rowH}
+                          fill={hueOf(id)} fill-opacity={row.deferred ? 0.08 : 0.24}
+                          stroke={hueOf(id)} stroke-width="1"
+                          stroke-dasharray={row.deferred ? '4 3' : undefined}
+                        />
+                        {hit > 0 && (
+                          <rect x={x0} y={y0} width={k(hit)} height={rowH} fill={hueOf(id)} />
+                        )}
+                        <text
+                          class="chart-halo"
+                          x={narrow ? x0 + k(w) / 2 : x0 + 5}
+                          y={narrow ? y0 - 4 : y0 + 11}
+                          text-anchor={narrow ? 'middle' : 'start'}
+                          style="font-size: 10px; fill: var(--text)"
+                        >
+                          {id}
+                        </text>
+                        {!narrow && (
+                          <text class="chart-halo" x={x0 + 5} y={y0 + 22} style="font-size: 9.5px">
+                            {hit > 0 ? `${fmt(hit)}k 命中` : `${fmt(w)}k`}
+                          </text>
+                        )}
+                      </g>
+                    );
+                  })}
+                  {row.limit !== undefined && (
+                    <g>
+                      <line
+                        x1={labelW + k(row.limit)} x2={labelW + k(row.limit)}
+                        y1={y0 - 3} y2={y0 + rowH + 3}
+                        stroke="var(--text-muted)" stroke-width="1.5" stroke-dasharray="3 2"
+                      />
+                      <text x={labelW + k(row.limit) + 6} y={y0 + 11} style="font-size: 10px">
+                        上限 {fmt(row.limit)}k
+                      </text>
+                      <text x={labelW + k(row.limit) + 6} y={y0 + 23} style="font-size: 10px">
+                        剩余 {fmt(row.limit - used)}k
+                      </text>
+                    </g>
+                  )}
+                  {row.deferred && (
+                    <text x={at + 8} y={y0 + rowH / 2 + 4} style="font-size: 10px">
+                      两个节点的剩余空间都放不下
+                    </text>
+                  )}
+                </g>
+              );
+            })}
+          </g>
+        ))
+      }
+      <line class="chart-axis" x1={labelW} x2={labelW + pw} y1={axisTop} y2={axisTop} />
+      {
+        ticks.map((t) => (
+          <g>
+            <line class="chart-axis" x1={labelW + k(t)} x2={labelW + k(t)} y1={axisTop} y2={axisTop + 4} />
+            <text x={labelW + k(t)} y={axisTop + 16} text-anchor="middle">{t}</text>
+          </g>
+        ))
+      }
+      <text x={labelW + pw / 2} y={H - 6} text-anchor="middle">准入权重（千 token）</text>
+    </svg>
+  </div>
+  <p class="chart__caption">
+    {
+      fig.hits
+        ? '浅色是会话占用的准入权重，深色是其中能复用的缓存。同一个会话在两种方案里颜色相同。'
+        : '方块宽度是准入权重（含每会话 512 token 预留）。虚线框是没能准入的会话。'
+    }
+  </p>
+</figure>

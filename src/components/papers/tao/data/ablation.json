@@ -1,0 +1,68 @@
+[
+ {
+  "config": "TAO (Ours)",
+  "decode": 1417.97,
+  "hit": 96.31,
+  "ttft": 0.154,
+  "ttftP90": 0.241,
+  "toolEnd": 0.203,
+  "toolEndP90": 0.299,
+  "pause": 0.972,
+  "pauseP90": 1.051
+ },
+ {
+  "config": "w/o Cache Value",
+  "decode": 1398.35,
+  "hit": 96.24,
+  "ttft": 0.157,
+  "ttftP90": 0.246,
+  "toolEnd": 0.209,
+  "toolEndP90": 0.309,
+  "pause": 1.028,
+  "pauseP90": 1.047
+ },
+ {
+  "config": "w/o Readiness",
+  "decode": 1363.06,
+  "hit": 96.16,
+  "ttft": 0.161,
+  "ttftP90": 0.253,
+  "toolEnd": 0.227,
+  "toolEndP90": 0.358,
+  "pause": 1.067,
+  "pauseP90": 1.079
+ },
+ {
+  "config": "w/o Cache Value & Readiness",
+  "decode": 1373.51,
+  "hit": 96.24,
+  "ttft": 0.182,
+  "ttftP90": 0.278,
+  "toolEnd": 0.213,
+  "toolEndP90": 0.317,
+  "pause": 1.025,
+  "pauseP90": 1.059
+ },
+ {
+  "config": "w/o Session Evaluation",
+  "decode": 1355.2,
+  "hit": 96.2,
+  "ttft": 0.162,
+  "ttftP90": 0.257,
+  "toolEnd": 0.226,
+  "toolEndP90": 0.35,
+  "pause": 1.025,
+  "pauseP90": 1.061
+ },
+ {
+  "config": "w/o Decision Making",
+  "decode": 1233.72,
+  "hit": 96.05,
+  "ttft": 0.195,
+  "ttftP90": 0.3,
+  "toolEnd": 0.235,
+  "toolEndP90": 0.354,
+  "pause": 1.081,
+  "pauseP90": 1.119
+ }
+]

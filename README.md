@@ -40,7 +40,7 @@ description: >-
   write it for a reader who has not opened the post yet.
 pubDate: 2025-03-09
 tags: ['Inference']   # subject tags, from a controlled list
-kind: 'Tutorial'      # Note (default) | Tutorial | Reference
+kind: 'Tutorial'      # Note (default) | Tutorial | Reference | Paper
 lang: 'en'            # 'en' or 'zh' — sets the lang attribute and date format
 ---
 
@@ -72,7 +72,8 @@ Add a term to the list when a real need appears rather than inventing a tag per
 post: a tag that appears on a single post makes its own tag page useless.
 
 What a piece *is* goes in the separate `kind` field — `Note` (the default, not
-badged), `Tutorial`, or `Reference`. Keeping the two apart means clicking a tag
+badged), `Tutorial`, `Reference`, or `Paper` for a reading of someone else's
+paper. Keeping the two apart means clicking a tag
 always means the same thing, instead of mixing subjects with page types. The
 reading list uses the same tag list; its entries have no kind.
 

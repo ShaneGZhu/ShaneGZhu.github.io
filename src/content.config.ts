@@ -25,7 +25,7 @@ const TOPICS = [
 ] as const;
 
 /** What a piece is, as opposed to what it is about. */
-const KINDS = ['Note', 'Tutorial', 'Reference'] as const;
+const KINDS = ['Note', 'Tutorial', 'Reference', 'Paper'] as const;
 
 const posts = defineCollection({
   loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/posts' }),
